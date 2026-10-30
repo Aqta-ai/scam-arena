@@ -165,6 +165,34 @@ def validate_analysis_result(obj, source):
             "safer_steps": checked_steps, "suggested_reply": reply}
 
 
+def _align_analysis_quotes(obj, source):
+    """Map whitespace-only quote differences to unique exact source spans.
+
+    The strict consumer below still checks the resulting original substrings.
+    No case, punctuation, word or non-whitespace character is changed.
+    """
+    if not isinstance(obj, dict) or set(obj) != ANALYSIS_KEYS:
+        return obj
+    flags = obj["red_flags"]
+    if not isinstance(flags, list) or len(flags) > 8:
+        return obj
+    aligned = []
+    for flag in flags:
+        if not isinstance(flag, dict) or set(flag) != {"quote", "why"}:
+            return obj
+        quote = _analysis_string(flag["quote"], 300)
+        if quote not in source:
+            # Escaped non-whitespace text is literal and case-sensitive. Only
+            # existing whitespace runs may differ from the model's formatting.
+            pattern = re.compile(r"\s+".join(re.escape(part) for part in quote.split()))
+            match = pattern.search(source)
+            if match is None or pattern.search(source, match.start() + 1) is not None:
+                raise AnalysisResponseError("A quoted warning sign has no unique whitespace-aligned source span.")
+            quote = _analysis_string(source[match.start():match.end()], 300)
+        aligned.append({"quote": quote, "why": flag["why"]})
+    return {**obj, "red_flags": aligned}
+
+
 def analyse(text):
     text = validate_analysis_text(text)
     messages = [{"role": "system", "content": ANALYST},
@@ -187,7 +215,7 @@ def analyse(text):
         obj = json.loads(content)
     except (TypeError, ValueError) as exc:
         raise AnalysisResponseError("The analysis was not complete JSON.") from exc
-    result = validate_analysis_result(obj, text)
+    result = validate_analysis_result(_align_analysis_quotes(obj, text), text)
     result.update({"model": MODEL, "provider": "Nebius Token Factory",
                    "analysed_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")})
     return result

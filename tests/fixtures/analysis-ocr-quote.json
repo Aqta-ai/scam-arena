@@ -1,0 +1,31 @@
+{
+  "kind": "synthetic-screenshot-transcription",
+  "source": "ParcelLink IE\n\nParcelLink: your parcel is held\nat the depot. A EUR 3.49\nredelivery fee is due today.\nPay to account PL-HOLD-8812\nor the parcel is returned.\nDo not reply to this number.",
+  "model_response": {
+    "assessment": "warning-signs",
+    "summary": "A text message claims a parcel is held at a depot and demands an immediate EUR 3.49 redelivery fee to prevent return. It instructs payment to a specific account and explicitly tells the recipient not to reply to the number. These are classic tactics used in smishing (SMS phishing) campaigns targeting delivery customers.",
+    "red_flags": [
+      {
+        "quote": "your parcel is held at the depot. A EUR 3.49 redelivery fee is due today.",
+        "why": "The message creates artificial urgency by stating a fee is due today, pressuring the recipient to act quickly without verifying the claim."
+      },
+      {
+        "quote": "Pay to account PL-HOLD-8812 or the parcel is returned.",
+        "why": "Demanding payment to a specific account to release a parcel is a common extortion tactic. Legitimate delivery services typically do not require immediate payment via unspecified accounts to release held items."
+      },
+      {
+        "quote": "Do not reply to this number.",
+        "why": "Instructing the recipient not to reply is a red flag designed to prevent verification and limit the recipient's ability to confirm the message's legitimacy through direct contact."
+      }
+    ],
+    "safer_steps": [
+      "Do not click any links or pay any fees mentioned in the message.",
+      "Contact the delivery company or retailer directly using independently verified contact details (e.g., from their official website or your order confirmation) to check if a redelivery fee is actually outstanding.",
+      "If you have recently ordered a parcel, check your order status and tracking information through the official retailer website or app.",
+      "Report the message as spam or phishing to your mobile provider if the option is available.",
+      "Delete the message and do not engage with the sender."
+    ],
+    "suggested_reply": ""
+  },
+  "before_alignment_error": "A quoted warning sign is not in the message."
+}

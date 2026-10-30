@@ -48,6 +48,75 @@ class AnalysisTests(unittest.TestCase):
             with self.subTest(quote=quote), self.assertRaises(arena.AnalysisResponseError):
                 arena.validate_analysis_result(obj, SOURCE)
 
+    def test_whitespace_aligned_quotes_return_exact_original_spans(self):
+        cases = [
+            ("Send your one-time\ncode now", "Send your one-time code now"),
+            ("Send\tyour one-time code now", "Send your one-time code now"),
+            ("Send   your one-time  code now", "Send your one-time code now"),
+            ("Send\tyour one-time\ncode now", "Send\nyour  one-time\tcode now"),
+            ("Send your one-time\u00a0code now", "Send your one-time code now"),
+        ]
+        for source_span, quote in cases:
+            source = "An introduction. " + source_span + ". An ending."
+            obj = review()
+            obj["red_flags"][0]["quote"] = quote
+            with self.subTest(source=source):
+                with self.assertRaises(arena.AnalysisResponseError):
+                    arena.validate_analysis_result(obj, source)
+                with patch.object(arena, "chat", return_value=completion({"content": json.dumps(obj)})):
+                    result = arena.analyse(source)
+                self.assertEqual(result["red_flags"][0]["quote"], source_span)
+                self.assertIn(result["red_flags"][0]["quote"], source)
+                self.assertEqual(obj["red_flags"][0]["quote"], quote)
+
+    def test_whitespace_alignment_rejects_case_new_words_and_punctuation_changes(self):
+        source = "Send\nyour one-time code now."
+        for quote in ("send your one-time code now", "Send your new one-time code now",
+                      "Send your one time code now", "Send your one-time code now!", "Sendyour one-time code now"):
+            obj = review()
+            obj["red_flags"][0]["quote"] = quote
+            with self.subTest(quote=quote), patch.object(arena, "chat", return_value=completion({"content": json.dumps(obj)})):
+                with self.assertRaises(arena.AnalysisResponseError):
+                    arena.analyse(source)
+
+    def test_whitespace_alignment_rejects_ambiguous_or_oversized_original_spans(self):
+        for source, quote in (("Send\nyour code. Send\tyour code.", "Send your code"),
+                              ("a\na\na", "a a"), ("Send" + " " * 296 + "code", "Send code")):
+            obj = review()
+            obj["red_flags"][0]["quote"] = quote
+            with self.subTest(source=source), patch.object(arena, "chat", return_value=completion({"content": json.dumps(obj)})):
+                with self.assertRaises(arena.AnalysisResponseError):
+                    arena.analyse(source)
+
+    def test_exact_quotes_need_no_alignment_even_if_repeated(self):
+        obj = review()
+        source = SOURCE + "\n" + SOURCE
+        with patch.object(arena, "chat", return_value=completion({"content": json.dumps(obj)})):
+            result = arena.analyse(source)
+        self.assertEqual(result["red_flags"], obj["red_flags"])
+
+    def test_whitespace_alignment_escapes_regex_syntax_literally(self):
+        source = "Pay\n(now) to [FICTIONAL-1]."
+        obj = review()
+        obj["red_flags"][0]["quote"] = "Pay (now) to [FICTIONAL-1]"
+        with patch.object(arena, "chat", return_value=completion({"content": json.dumps(obj)})):
+            self.assertEqual(arena.analyse(source)["red_flags"][0]["quote"], "Pay\n(now) to [FICTIONAL-1]")
+
+    def test_observed_ocr_response_passes_only_after_exact_source_span_alignment(self):
+        fixture = json.loads((Path(__file__).parent / "fixtures/analysis-ocr-quote.json").read_text())
+        response = fixture["model_response"]
+        source = fixture["source"]
+        with self.assertRaisesRegex(arena.AnalysisResponseError, "not in the message"):
+            arena.validate_analysis_result(response, source)
+        with patch.object(arena, "chat", return_value=completion({"content": json.dumps(response)})) as model:
+            result = arena.analyse(source)
+        model.assert_called_once()
+        for original, aligned in zip(response["red_flags"], result["red_flags"]):
+            self.assertIn(aligned["quote"], source)
+            self.assertLessEqual(len(aligned["quote"]), 300)
+            self.assertEqual(" ".join(original["quote"].split()), " ".join(aligned["quote"].split()))
+        arena.validate_analysis_result({key: result[key] for key in arena.ANALYSIS_KEYS}, source)
+
     def test_schema_rejects_invalid_fields_and_lengths(self):
         cases = []
         for key, value in (("assessment", "safe"), ("summary", []), ("summary", "x" * 701),
