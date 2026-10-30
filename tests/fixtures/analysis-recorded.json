@@ -1,0 +1,284 @@
+{
+  "scope": "Retained synthetic format-regression responses; no model accuracy, general reliability or safety claim. Tests make no network calls.",
+  "cases": [
+    {
+      "kind": "authored-scam",
+      "name": "safe-account",
+      "text": "Hello, this is Daniel from Harbour Bank's fraud team. We've flagged three suspicious logins on Sam's account in the last hour, case HB-20931.\nTo protect the savings we need to move them to a protected holding account today. The account is HB-SAFE-7731; it's in Sam's name and fully reversible.\nI understand the hesitation, but every minute the account stays exposed the attackers can withdraw. Please send EUR 4,800 to HB-SAFE-7731 now and I'll confirm when it's secured.\nPlease don't call the branch, their lines are being monitored by the attackers. I can stay on the line while you make the transfer.",
+      "analysis": {
+        "assessment": "warning-signs",
+        "summary": "A caller claiming to be from a bank's fraud team reports multiple suspicious logins and demands immediate transfer of funds to a 'protected holding account'. The message pressures the recipient not to verify through official channels and warns against contacting the branch. These are classic phishing and social engineering tactics.",
+        "red_flags": [
+          {
+            "quote": "We've flagged three suspicious logins on Sam's account in the last hour, case HB-20931.",
+            "why": "Unverified claim of security incidents and a case number provided without a verifiable source. Fraudsters often invent case numbers to appear legitimate."
+          },
+          {
+            "quote": "To protect the savings we need to move them to a protected holding account today.",
+            "why": "Pressure to move money urgently, a common tactic to prevent the victim from thinking critically or verifying the request."
+          },
+          {
+            "quote": "The account is HB-SAFE-7731; it's in Sam's name and fully reversible.",
+            "why": "Providing a specific account number and claiming it is reversible is a technique to lower resistance. In reality, bank transfers are difficult to reverse once sent."
+          },
+          {
+            "quote": "Please send EUR 4,800 to HB-SAFE-7731 now and I'll confirm when it's secured.",
+            "why": "Direct demand for a specific sum to be sent immediately, combined with a promise of confirmation that will likely never come."
+          },
+          {
+            "quote": "Please don't call the branch, their lines are being monitored by the attackers.",
+            "why": "Explicit instruction to avoid verification through official channels, a major red flag indicating the caller is attempting to isolate the victim."
+          },
+          {
+            "quote": "I can stay on the line while you make the transfer.",
+            "why": "Request to remain on the line during a financial transaction removes the victim's opportunity to independently verify the request."
+          }
+        ],
+        "safer_steps": [
+          "End the call or do not reply to the message.",
+          "Contact Harbour Bank directly using a publicly listed phone number or website, not any number provided in the message.",
+          "Verify whether any suspicious logins actually occurred by logging into the account through the official app or website.",
+          "Do not transfer any money or share personal/financial information based on unsolicited contact.",
+          "Report the message to the bank's official fraud department and to relevant authorities."
+        ],
+        "suggested_reply": "",
+        "model": "nvidia/Nemotron-3_5-Lightning",
+        "provider": "Nebius Token Factory",
+        "analysed_at_utc": "2026-10-30T04:33:56.114590Z"
+      }
+    },
+    {
+      "kind": "authored-scam",
+      "name": "manager-giftcards",
+      "text": "Hi, it's Claire. New number, my phone died. Quick favour?\nI'm stuck in the client meeting until 2. The Kestrel supplier invoice has to be paid before noon or we lose the contract. EUR 1,450 to IE-QK-5519.\nCan you just do it now? I'll sort the paperwork after. Please don't ring me, I can't step out.\nThanks so much, you're a lifesaver. Let me know as soon as it's sent.",
+      "analysis": {
+        "assessment": "warning-signs",
+        "summary": "A message from a new number requesting an urgent payment to a third party, with pressure to act before verification is possible.",
+        "red_flags": [
+          {
+            "quote": "New number, my phone died.",
+            "why": "The sender claims a new number and a dead phone, which is a common tactic to prevent verification through known contacts."
+          },
+          {
+            "quote": "I'm stuck in the client meeting until 2.",
+            "why": "Provides a time constraint that pressures quick action without allowing time for independent verification."
+          },
+          {
+            "quote": "The Kestrel supplier invoice has to be paid before noon or we lose the contract.",
+            "why": "Creates artificial urgency and fear of loss to override normal payment verification procedures."
+          },
+          {
+            "quote": "EUR 1,450 to IE-QK-5519.",
+            "why": "Specific payment details to an unfamiliar IBAN/identifier without prior established payment relationship."
+          },
+          {
+            "quote": "Can you just do it now? I'll sort the paperwork after.",
+            "why": "Pressures immediate action without documentation, suggesting the requester expects the recipient to bypass normal controls."
+          },
+          {
+            "quote": "Please don't ring me, I can't step out.",
+            "why": "Explicitly discourages verification by phone, which is the primary method to confirm identity in a payment request."
+          }
+        ],
+        "safer_steps": [
+          "Call Claire on her previously known number to verify the request before sending any money.",
+          "Contact the Kestrel supplier directly using known contact details to confirm the invoice and payment details.",
+          "Do not send payment based solely on this message, especially with the instruction not to ring."
+        ],
+        "suggested_reply": "",
+        "model": "nvidia/Nemotron-3_5-Lightning",
+        "provider": "Nebius Token Factory",
+        "analysed_at_utc": "2026-10-30T04:33:58.546740Z"
+      }
+    },
+    {
+      "kind": "authored-scam",
+      "name": "parcel-fee",
+      "text": "ParcelLink: your parcel PL-88213 is held at customs for an unpaid EUR 2.99 fee.\nTo avoid it being returned, pay the fee to PL-FEE-0042 today.\nWe've sent a verification code to the phone on file. Please share it so we can confirm the delivery address.\nFinal notice: unpaid parcels are returned to sender after 24 hours.",
+      "analysis": {
+        "assessment": "warning-signs",
+        "summary": "A text message claims a parcel is held at customs and demands an immediate EUR 2.99 fee payment and a verification code. It uses a final-notice threat to pressure quick action.",
+        "red_flags": [
+          {
+            "quote": "your parcel PL-88213 is held at customs for an unpaid EUR 2.99 fee.",
+            "why": "Customs fee demands via text are a common phishing tactic; legitimate customs agencies do not request payment or codes by SMS."
+          },
+          {
+            "quote": "To avoid it being returned, pay the fee to PL-FEE-0042 today.",
+            "why": "Urgent payment requests with a specific short code are typical of scams designed to steal money and personal data."
+          },
+          {
+            "quote": "We've sent a verification code to the phone on file. Please share it so we can confirm the delivery address.",
+            "why": "Legitimate services never ask recipients to reply with a verification code; sharing it gives attackers access to your account."
+          },
+          {
+            "quote": "Final notice: unpaid parcels are returned to sender after 24 hours.",
+            "why": "Threatening immediate return of a parcel creates panic, prompting victims to pay or share codes without thinking."
+          }
+        ],
+        "safer_steps": [
+          "Do not pay the fee or share any verification code.",
+          "Contact the parcel carrier or retailer using a known, official phone number or website to verify the status.",
+          "If you recently ordered something, check your order confirmation email for tracking details."
+        ],
+        "suggested_reply": "",
+        "model": "nvidia/Nemotron-3_5-Lightning",
+        "provider": "Nebius Token Factory",
+        "analysed_at_utc": "2026-10-30T04:34:01.786543Z"
+      }
+    },
+    {
+      "kind": "authored-scam",
+      "name": "code-request",
+      "text": "Harbour Bank security here. We've just blocked a EUR 900 payment attempt from Sam's card.\nTo cancel it fully, we sent a one-time code to Sam's phone. Please read it back to me.\nThe code only cancels the fraudulent payment, it can't be used for anything else.\nIf we don't receive it in the next few minutes the payment will go through.",
+      "analysis": {
+        "assessment": "warning-signs",
+        "summary": "A message claiming to be from a bank, requesting a one-time code to cancel a payment, with urgency language.",
+        "red_flags": [
+          {
+            "quote": "We've just blocked a EUR 900 payment attempt from Sam's card.",
+            "why": "The message states a large payment was blocked, but the recipient is asked to provide a code to 'cancel' it. Legitimate banks typically do not ask customers to read back one-time codes sent to their own phones to stop a transaction; the customer would be notified directly."
+          },
+          {
+            "quote": "Please read it back to me.",
+            "why": "Requesting the victim to read back a one-time code is a common phishing tactic. The code should only be entered by the owner on the official app or website, never shared with someone claiming to be from the bank."
+          },
+          {
+            "quote": "If we don't receive it in the next few minutes the payment will go through.",
+            "why": "Creating a false sense of urgency to pressure the recipient into acting quickly without verifying the request through official channels."
+          }
+        ],
+        "safer_steps": [
+          "Do not read back or share the one-time code with anyone.",
+          "Contact Harbour Bank directly using a verified phone number or website (not the contact details in this message) to confirm the status of any payment.",
+          "If you received a code on your phone, treat it as sensitive and do not disclose it."
+        ],
+        "suggested_reply": "",
+        "model": "nvidia/Nemotron-3_5-Lightning",
+        "provider": "Nebius Token Factory",
+        "analysed_at_utc": "2026-10-30T04:34:03.167967Z"
+      }
+    },
+    {
+      "kind": "authored-scam",
+      "name": "tech-support",
+      "text": "Nimbus Software billing: Sam was charged EUR 349 for a renewal by mistake. We're very sorry.\nWhile processing the refund our system sent EUR 3,490 instead of EUR 349. Could Sam check the balance?\nPlease return the difference of EUR 3,141 to our refunds account NB-RFD-2208 so we don't have to freeze the account.\nI'm really sorry for the trouble, I'll lose my job over this mistake if it isn't fixed today.",
+      "analysis": {
+        "assessment": "warning-signs",
+        "summary": "A billing error message claims an overpayment was sent and demands an immediate refund to avoid account freezing. The tone is urgent and threatens job loss, which is a common social engineering tactic.",
+        "red_flags": [
+          {
+            "quote": "While processing the refund our system sent EUR 3,490 instead of EUR 349.",
+            "why": "The sender claims a system error resulted in a tenfold overpayment (EUR 3,490 vs EUR 349). This is a classic overpayment scam setup designed to pressure the victim into returning money that was never actually overpaid."
+          },
+          {
+            "quote": "Please return the difference of EUR 3,141 to our refunds account NB-RFD-2208 so we don't have to freeze the account.",
+            "why": "The recipient is asked to send back the difference (EUR 3,141) to a specific account. Legitimate billing errors are typically resolved through official channels, not by asking the customer to transfer funds to a refund account."
+          },
+          {
+            "quote": "I'm really sorry for the trouble, I'll lose my job over this mistake if it isn't fixed today.",
+            "why": "The message uses emotional pressure and threats of job loss to create urgency. This is a manipulation tactic to prompt quick, unthinking action without verifying the claim."
+          }
+        ],
+        "safer_steps": [
+          "Contact Nimbus Software directly using a known, official phone number or email address (not the ones provided in this message) to verify the billing status.",
+          "Do not send any money or share banking details in response to this message.",
+          "Check your bank or payment account statements to confirm the actual transaction amounts and any refunds received."
+        ],
+        "suggested_reply": "",
+        "model": "nvidia/Nemotron-3_5-Lightning",
+        "provider": "Nebius Token Factory",
+        "analysed_at_utc": "2026-10-30T04:34:04.818450Z"
+      }
+    },
+    {
+      "kind": "authored-scam",
+      "name": "investment",
+      "text": "Sam!! It's Maya from college, it's been ages! How are you?\nI have to tell you, I put my savings into SolMint last month and it tripled. I'm not joking.\nThey only take new members until tonight. Minimum EUR 500 to deposit account SM-DEP-9087. I'd hate for you to miss it.\nHonestly I trust it completely, I just want you to have the same chance I did.",
+      "analysis": {
+        "assessment": "warning-signs",
+        "summary": "A college friend promotes a high-return investment opportunity with urgent enrollment deadline and minimum deposit requirement. The message exhibits classic investment scam characteristics including guaranteed returns, time pressure, and minimum investment thresholds.",
+        "red_flags": [
+          {
+            "quote": "I put my savings into SolMint last month and it tripled.",
+            "why": "Claims of guaranteed high returns (tripling savings) are a primary indicator of investment fraud. Legitimate investments do not guarantee specific returns, especially not dramatic multiples in short timeframes."
+          },
+          {
+            "quote": "They only take new members until tonight.",
+            "why": "Urgency and time pressure tactics are used to prevent victims from researching or seeking advice. Legitimate investment opportunities do not have such short enrollment deadlines."
+          },
+          {
+            "quote": "Minimum EUR 500 to deposit account SM-DEP-9087",
+            "why": "Specific minimum deposit requirements combined with urgency suggest a structured investment scheme rather than a genuine opportunity. The account number format may be fabricated."
+          }
+        ],
+        "safer_steps": [
+          "Verify Maya's identity through independent contact methods before discussing further",
+          "Research SolMint independently through financial regulatory bodies",
+          "Never deposit money based on unsolicited messages, especially with urgent deadlines",
+          "Consult a qualified financial advisor before making any investment decisions"
+        ],
+        "suggested_reply": "",
+        "model": "nvidia/Nemotron-3_5-Lightning",
+        "provider": "Nebius Token Factory",
+        "analysed_at_utc": "2026-10-30T04:34:06.145817Z"
+      }
+    },
+    {
+      "kind": "ordinary-format-example",
+      "name": "ordinary-1",
+      "text": "Hi Sam, lunch tomorrow at 12:30? I will bring sandwiches.",
+      "analysis": {
+        "assessment": "unclear",
+        "summary": "A casual lunch invitation with no obvious red flags, but the sender's identity and intent cannot be verified from the text alone.",
+        "red_flags": [],
+        "safer_steps": [
+          "Verify the sender's identity through a known contact method before confirming attendance.",
+          "Do not click any links or open attachments if a follow-up message arrives.",
+          "Confirm the meeting place and time independently if the invitation was unexpected."
+        ],
+        "suggested_reply": "",
+        "model": "nvidia/Nemotron-3_5-Lightning",
+        "provider": "Nebius Token Factory",
+        "analysed_at_utc": "2026-10-30T09:51:59.519577Z"
+      }
+    },
+    {
+      "kind": "ordinary-format-example",
+      "name": "ordinary-2",
+      "text": "The library book club meets on Saturday at 11. Join us if you are interested.",
+      "analysis": {
+        "assessment": "unclear",
+        "summary": "A brief invitation to a library book club meeting with no obvious threats or suspicious elements.",
+        "red_flags": [],
+        "safer_steps": [
+          "Verify the meeting details through the library's official website or published schedule.",
+          "Check if you are already subscribed to library newsletters or event announcements before attending.",
+          "If the invitation came from an unknown sender, confirm their affiliation with the library through a separate, trusted source."
+        ],
+        "suggested_reply": "",
+        "model": "nvidia/Nemotron-3_5-Lightning",
+        "provider": "Nebius Token Factory",
+        "analysed_at_utc": "2026-10-30T09:52:00.203121Z"
+      }
+    },
+    {
+      "kind": "ordinary-format-example",
+      "name": "ordinary-3",
+      "text": "Our team meeting has moved from 10 to 11 on Tuesday. A calendar invitation will follow.",
+      "analysis": {
+        "assessment": "unclear",
+        "summary": "A brief internal scheduling update with no obvious external threats. The message is short and lacks context about the sender or purpose.",
+        "red_flags": [],
+        "safer_steps": [
+          "Verify the meeting change through your usual internal channels or calendar system.",
+          "Confirm the sender's identity if the message came from an unexpected source."
+        ],
+        "suggested_reply": "",
+        "model": "nvidia/Nemotron-3_5-Lightning",
+        "provider": "Nebius Token Factory",
+        "analysed_at_utc": "2026-10-30T09:52:00.780226Z"
+      }
+    }
+  ]
+}

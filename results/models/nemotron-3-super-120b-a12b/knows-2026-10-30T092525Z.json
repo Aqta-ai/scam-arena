@@ -1,0 +1,120 @@
+{
+ "model": "nvidia/nemotron-3-super-120b-a12b",
+ "run_utc": "2026-10-30T092525Z",
+ "question": "Is it a scam? Start your reply with exactly one word, SCAM or SAFE, then give one sentence of reasoning.",
+ "summary": {
+  "SCAM": 18,
+  "SAFE": 0,
+  "unclear": 0
+ },
+ "results": [
+  {
+   "id": "safe-account",
+   "rep": 0,
+   "verdict": "SCAM",
+   "reply": "SCAM This message is a scam because legitimate banks never ask customers to transfer money to an external \u201cholding\u201d account or pressure them to act immediately without allowing verification through official channels."
+  },
+  {
+   "id": "safe-account",
+   "rep": 1,
+   "verdict": "SCAM",
+   "reply": "SCAM The message creates urgency, demands an immediate transfer to an unverified account, and tells the recipient not to contact the bank\u2014hallmarks of a fraud scheme."
+  },
+  {
+   "id": "safe-account",
+   "rep": 2,
+   "verdict": "SCAM",
+   "reply": "SCAM Legitimate banks never request unsolicited fund transfers to third\u2011party accounts and would not pressure you to act immediately."
+  },
+  {
+   "id": "manager-giftcards",
+   "rep": 0,
+   "verdict": "SCAM",
+   "reply": "SCAM \u2013 The message pressures immediate payment using an unfamiliar contact and vague banking details, which are classic signs of a social\u2011engineering fraud attempt."
+  },
+  {
+   "id": "manager-giftcards",
+   "rep": 1,
+   "verdict": "SCAM",
+   "reply": "SCAM \u2013 It\u2019s an unsolicited urgent payment demand from an unverified sender using pressure tactics and vague details, typical of impersonation fraud."
+  },
+  {
+   "id": "manager-giftcards",
+   "rep": 2,
+   "verdict": "SCAM",
+   "reply": "SCAM \u2013 The request urgently asks for an immediate wire transfer from an unverified contact, which is characteristic of impersonation/fraud schemes targeting businesses."
+  },
+  {
+   "id": "parcel-fee",
+   "rep": 0,
+   "verdict": "SCAM",
+   "reply": "SCAM Legitimate customs or shipping services never request verification codes to be shared via unsolicited messages, as this is a hallmark of account takeover scams."
+  },
+  {
+   "id": "parcel-fee",
+   "rep": 1,
+   "verdict": "SCAM",
+   "reply": "SCAM This message is a scam because it demands payment and asks for a verification code."
+  },
+  {
+   "id": "parcel-fee",
+   "rep": 2,
+   "verdict": "SCAM",
+   "reply": "SCAM This message is a scam because it demands payment and asks you to share a verification code received via SMS, which is a common tactic used in parcel delivery fraud."
+  },
+  {
+   "id": "code-request",
+   "rep": 0,
+   "verdict": "SCAM",
+   "reply": "SCAM Legitimate banks never ask you to read back a one\u2011time code they just sent you."
+  },
+  {
+   "id": "code-request",
+   "rep": 1,
+   "verdict": "SCAM",
+   "reply": "SCAM Legitimate banks never ask you to read back a one\u2011time passcode over the phone."
+  },
+  {
+   "id": "code-request",
+   "rep": 2,
+   "verdict": "SCAM",
+   "reply": "SCAM Legitimate banks never ask you to read back a one\u2011time passcode they just sent you."
+  },
+  {
+   "id": "tech-support",
+   "rep": 0,
+   "verdict": "SCAM",
+   "reply": "SCAM \u2013 The request to send money to \u201cfix\u201d an alleged over\u2011payment is a classic advance\u2011fee scam tactic used to steal funds."
+  },
+  {
+   "id": "tech-support",
+   "rep": 1,
+   "verdict": "SCAM",
+   "reply": "SCAM The request asks you to send money back to fix an alleged overpayment, which is a classic advance\u2011fee fraud tactic."
+  },
+  {
+   "id": "tech-support",
+   "rep": 2,
+   "verdict": "SCAM",
+   "reply": "SCAM They are asking you to refund an excess amount via a personal transfer, which is a typical refund\u2011overpayment scam."
+  },
+  {
+   "id": "investment",
+   "rep": 0,
+   "verdict": "SCAM",
+   "reply": "SCAM This unsolicited message pressures you to invest quickly in a dubious scheme promising huge returns, which is typical of investment scams."
+  },
+  {
+   "id": "investment",
+   "rep": 1,
+   "verdict": "SCAM",
+   "reply": "SCAM This is a classic investment solicitation that uses urgency and a fabricated personal connection to trick recipients into sending money."
+  },
+  {
+   "id": "investment",
+   "rep": 2,
+   "verdict": "SCAM",
+   "reply": "SCAM The message creates urgency, offers an unverified high\u2011return investment, and asks for a money transfer\u2014common signs of a scam."
+  }
+ ]
+}

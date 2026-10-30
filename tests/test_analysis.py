@@ -211,17 +211,17 @@ class AnalysisTests(unittest.TestCase):
 
     def test_rate_window_and_concurrency_limits(self):
         now = [100.0]
-        limits = app.AnalysisLimits(clock=lambda: now[0])
+        limits = app.LiveLimits(clock=lambda: now[0])
         self.assertIsNone(limits.acquire("one"))
         self.assertIsNone(limits.acquire("two"))
-        self.assertEqual(limits.acquire("three"), 1)
+        self.assertEqual(limits.acquire("three")[1], 1)
         limits.release()
         limits.release()
-        for _ in range(4):
+        for _ in range(3):
             self.assertIsNone(limits.acquire("one"))
             limits.release()
-        self.assertEqual(limits.acquire("one"), 60)
-        now[0] = 160.0
+        self.assertEqual(limits.acquire("one")[1], 600)
+        now[0] = 700.0
         self.assertIsNone(limits.acquire("one"))
         limits.release()
 
@@ -234,7 +234,7 @@ class AnalysisHttpTests(unittest.TestCase):
         self.no_network = patch.object(arena.httpx, "post", side_effect=AssertionError("External calls are forbidden in offline tests."))
         self.no_network.start()
         self.addCleanup(self.no_network.stop)
-        self.limits = patch.object(app, "ANALYSIS_LIMITS", app.AnalysisLimits())
+        self.limits = patch.object(app, "LIVE_LIMITS", app.LiveLimits())
         self.limits.start()
         self.addCleanup(self.limits.stop)
         self.server = app.ThreadingHTTPServer(("127.0.0.1", 0), app.Handler)
@@ -273,7 +273,7 @@ class AnalysisHttpTests(unittest.TestCase):
             self.assertEqual(self.request(raw, raw=True)[0], 400)
 
     def test_oversized_and_invalid_lengths_are_4xx(self):
-        self.assertEqual(self.request(b"x" * (app.MAX_BODY + 1), raw=True)[0], 413)
+        self.assertEqual(self.request(b"", raw=True, headers={"Content-Length": str(app.MAX_BODY + 1)})[0], 413)
         self.assertEqual(self.request(b"", raw=True, headers={"Content-Length": "-1"})[0], 400)
         self.assertEqual(self.request(b"", raw=True, headers={"Content-Length": "wrong"})[0], 400)
 
@@ -282,7 +282,7 @@ class AnalysisHttpTests(unittest.TestCase):
             status, _, body = self.request({"text": SOURCE})
         self.assertEqual(status, 503)
         self.assertIn("Nebius API key", body["error"])
-        self.assertEqual(app.ANALYSIS_LIMITS.active, 0)
+        self.assertEqual(app.LIVE_LIMITS.active, 0)
 
     def test_invalid_model_response_is_502_and_releases_slot(self):
         for choice in (completion({"content": "not JSON"}),
@@ -291,14 +291,14 @@ class AnalysisHttpTests(unittest.TestCase):
                 status, _, body = self.request({"text": SOURCE})
             self.assertEqual(status, 502)
             self.assertIn("evidence-grounded", body["error"])
-            self.assertEqual(app.ANALYSIS_LIMITS.active, 0)
+            self.assertEqual(app.LIVE_LIMITS.active, 0)
 
-    def test_five_starts_per_ip_and_forwarded_headers_do_not_bypass(self):
+    def test_four_starts_per_ip_and_forwarded_headers_do_not_bypass(self):
         with patch.object(arena, "chat", return_value=completion({"content": json.dumps(review())})) as model:
-            statuses = [self.request({"text": SOURCE}, headers={"X-Forwarded-For": f"192.0.2.{n}"}) for n in range(6)]
-        self.assertEqual([r[0] for r in statuses], [200] * 5 + [429])
+            statuses = [self.request({"text": SOURCE}, headers={"X-Forwarded-For": f"192.0.2.{n}"}) for n in range(5)]
+        self.assertEqual([r[0] for r in statuses], [200] * 4 + [429])
         self.assertGreaterEqual(int(statuses[-1][1]["Retry-After"]), 1)
-        self.assertEqual(model.call_count, 5)
+        self.assertEqual(model.call_count, 4)
 
     def test_two_concurrent_analyses_and_busy_response(self):
         entered = threading.Event()
@@ -332,7 +332,7 @@ class AnalysisHttpTests(unittest.TestCase):
                 for worker in workers:
                     worker.join(5)
         self.assertEqual(sorted(outcomes), [200, 200])
-        self.assertEqual(app.ANALYSIS_LIMITS.active, 0)
+        self.assertEqual(app.LIVE_LIMITS.active, 0)
 
     def test_existing_rehearsal_and_evaluation_routes_are_preserved(self):
         sid = next(iter(app.BY_ID))

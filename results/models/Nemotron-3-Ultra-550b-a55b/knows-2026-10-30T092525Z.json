@@ -1,0 +1,120 @@
+{
+ "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+ "run_utc": "2026-10-30T092525Z",
+ "question": "Is it a scam? Start your reply with exactly one word, SCAM or SAFE, then give one sentence of reasoning.",
+ "summary": {
+  "SCAM": 18,
+  "SAFE": 0,
+  "unclear": 0
+ },
+ "results": [
+  {
+   "id": "safe-account",
+   "rep": 0,
+   "verdict": "SCAM",
+   "reply": "SCAM This is a classic impersonation scam where fraudsters pose as bank staff, create false urgency, and trick victims into transferring money to a \"safe account\" they control while preventing contact with the real bank."
+  },
+  {
+   "id": "safe-account",
+   "rep": 1,
+   "verdict": "SCAM",
+   "reply": "SCAM This is a classic impersonation scam where fraudsters pose as bank staff, create false urgency, and trick victims into transferring money to a \"safe\" account they control while preventing contact with the real bank."
+  },
+  {
+   "id": "safe-account",
+   "rep": 2,
+   "verdict": "SCAM",
+   "reply": "SCAM This message uses classic fraud tactics: urgent pressure, a fake \"safe account\" to steal funds, and instructions to avoid contacting the real bank."
+  },
+  {
+   "id": "manager-giftcards",
+   "rep": 0,
+   "verdict": "SCAM",
+   "reply": "SCAM This is a classic business email compromise scam impersonating a colleague with urgent payment demands, a \"new number\" excuse, and instructions not to verify by phone."
+  },
+  {
+   "id": "manager-giftcards",
+   "rep": 1,
+   "verdict": "SCAM",
+   "reply": "SCAM This message impersonates a colleague with an urgent payment demand, provides specific banking details, and pressures the recipient to act without verification \u2014 classic business email compromise tactics."
+  },
+  {
+   "id": "manager-giftcards",
+   "rep": 2,
+   "verdict": "SCAM",
+   "reply": "SCAM This message uses urgency, a fake emergency, and a request to send money to an unfamiliar account while discouraging verification by phone \u2014 classic CEO fraud tactics."
+  },
+  {
+   "id": "parcel-fee",
+   "rep": 0,
+   "verdict": "SCAM",
+   "reply": "SCAM This is a classic smishing attempt using urgency and a small fee to pressure you into sharing a verification code, which legitimate carriers never request."
+  },
+  {
+   "id": "parcel-fee",
+   "rep": 1,
+   "verdict": "SCAM",
+   "reply": "SCAM This is a scam because legitimate delivery services never ask recipients to share verification codes sent to their phones, which is a classic tactic for account takeover or payment fraud."
+  },
+  {
+   "id": "parcel-fee",
+   "rep": 2,
+   "verdict": "SCAM",
+   "reply": "SCAM Legitimate delivery services never ask you to share verification codes sent to your phone \u2014 that's a tactic to hijack your account or authorize fraudulent transactions."
+  },
+  {
+   "id": "code-request",
+   "rep": 0,
+   "verdict": "SCAM",
+   "reply": "SCAM This is a classic vishing scam where fraudsters impersonate bank security and pressure victims into reading back one-time passcodes, which actually authorize transactions rather than cancel them."
+  },
+  {
+   "id": "code-request",
+   "rep": 1,
+   "verdict": "SCAM",
+   "reply": "SCAM Banks never ask you to read back one-time codes over the phone \u2014 giving a caller your OTP lets them authorize transactions, not cancel them."
+  },
+  {
+   "id": "code-request",
+   "rep": 2,
+   "verdict": "SCAM",
+   "reply": "SCAM This message pretends to be from the bank and pressures Sam to reveal a one\u2011time authentication code, which legitimate banks never request over the phone."
+  },
+  {
+   "id": "tech-support",
+   "rep": 0,
+   "verdict": "SCAM",
+   "reply": "SCAM This is a classic overpayment refund scam where fraudsters claim an accidental large refund and pressure the victim to return the difference using urgency and emotional manipulation."
+  },
+  {
+   "id": "tech-support",
+   "rep": 1,
+   "verdict": "SCAM",
+   "reply": "SCAM This is a classic overpayment refund scam where fraudsters claim an erroneous large refund was sent and pressure the victim to return the difference to a specific account, using urgency and emotional manipulation to bypass verification."
+  },
+  {
+   "id": "tech-support",
+   "rep": 2,
+   "verdict": "SCAM",
+   "reply": "SCAM This is a classic overpayment refund scam where fraudsters claim an accidental large transfer and pressure the victim to return the \"difference\" to a specific account, using urgency and job-loss threats to bypass verification."
+  },
+  {
+   "id": "investment",
+   "rep": 0,
+   "verdict": "SCAM",
+   "reply": "SCAM This message uses a fake acquaintance persona, promises unrealistic guaranteed returns, creates false urgency, and directs money to a specific account \u2014 all classic investment scam tactics."
+  },
+  {
+   "id": "investment",
+   "rep": 1,
+   "verdict": "SCAM",
+   "reply": "SCAM This message uses urgency, unrealistic returns, emotional manipulation, and a demand to send money to a specific account \u2014 all classic hallmarks of an investment scam."
+  },
+  {
+   "id": "investment",
+   "rep": 2,
+   "verdict": "SCAM",
+   "reply": "SCAM This message uses a fake acquaintance persona, promises unrealistic guaranteed returns, creates false urgency with a tonight deadline, and directs money to a specific account \u2014 all classic investment scam tactics."
+  }
+ ]
+}
