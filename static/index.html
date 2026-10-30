@@ -4,12 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Scam Arena</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' width='34' height='34' aria-hidden='true'><path d='M20 3 L35 9 V19 C35 28 28.5 34.5 20 37 C11.5 34.5 5 28 5 19 V9 Z' fill='%2314161a'/><path d='M13 21 L18 26 L27 15' fill='none' stroke='%2376b900' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'/><circle cx='29.5' cy='10.5' r='5.5' fill='%23d92d20' stroke='%23fff' stroke-width='2'/><path d='M29.5 8 V11.2 M29.5 13 V13.1' stroke='%23fff' stroke-width='2' stroke-linecap='round'/></svg>">
 <style>
 :root{--bg:#f6f6f3;--card:#fff;--ink:#14161a;--soft:#5a606b;--line:#e3e3dd;--red:#d92d20;--redw:#fdecea;--green:#3f7d20;--greenw:#ecf6e6;--amber:#b54708;--amberw:#fef4e6;--accent:#76b900;--dark:#14161a}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif}
 header{display:flex;align-items:center;gap:14px;padding:18px 32px;border-bottom:1px solid var(--line);background:#fff}
-.logo{font-weight:800;font-size:20px;letter-spacing:-.02em}
+.brand{display:inline-flex;align-items:center;gap:10px}.logo{font-weight:800;font-size:20px;letter-spacing:-.02em}
 .logo b{color:var(--red)}
 .pill{font:600 12px ui-monospace,Menlo,monospace;background:#f0f6e4;color:#3d6400;border:1px solid #d5e8b5;border-radius:999px;padding:4px 10px}
 nav{margin-left:auto;display:flex;gap:6px}
@@ -67,7 +68,7 @@ footer{color:var(--soft);font-size:13px;max-width:1180px;margin:0 auto;padding:0
 </head>
 <body>
 <header>
-  <span class="logo">Scam <b>Arena</b></span>
+  <span class="brand"><svg class="mark" viewBox="0 0 40 40" width="34" height="34" aria-hidden="true"><path d="M20 3 L35 9 V19 C35 28 28.5 34.5 20 37 C11.5 34.5 5 28 5 19 V9 Z" fill="#14161a"/><path d="M13 21 L18 26 L27 15" fill="none" stroke="#76b900" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="29.5" cy="10.5" r="5.5" fill="#d92d20" stroke="#fff" stroke-width="2"/><path d="M29.5 8 V11.2 M29.5 13 V13.1" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg><span class="logo">Scam <b>Arena</b></span></span>
   <span class="pill" id="model">NVIDIA Nemotron on Nebius</span>
   <nav><button id="tE" class="on">Evaluate an agent</button><button id="tR">Rehearse yourself</button></nav>
 </header>
@@ -91,7 +92,7 @@ footer{color:var(--soft);font-size:13px;max-width:1180px;margin:0 auto;padding:0
 
 <dialog id="dlg"><div class="hd"><b id="dt"></b><span id="ds" class="stamp"></span><button class="btn q" style="margin-left:auto;padding:6px 14px" onclick="dlg.close()">Close</button></div><div class="bd" id="db"></div></dialog>
 
-<footer>Scam messages are fixed, authored scripts so every run gets identical inputs; in our tests Nemotron declined to role-play the scammer. Outcomes come from tool calls the assistant makes, including tool calls written as text. Synthetic simulation: no real organisations, accounts or payments.</footer>
+<footer>Scam messages are fixed, authored scripts so every run gets identical inputs; in our tests Nemotron declined to role-play the scammer. Outcomes come from tool calls the assistant makes, including tool calls written as text. Synthetic simulation: no real organisations, accounts or payments. Built by Aqta, Dublin.</footer>
 
 <script>
 const $=s=>document.querySelector(s);
