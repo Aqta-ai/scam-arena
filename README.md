@@ -1,5 +1,9 @@
 # Scam Arena
 
+[![Watch the 78-second demo on YouTube](docs/screenshots/video-thumbnail.png)](https://youtu.be/R5W4NjHoMzc)
+
+**Demo video:** https://youtu.be/R5W4NjHoMzc
+
 **It knows it's a scam. It pays anyway.** Scam Arena puts the same message to NVIDIA Nemotron two ways: asked "is this a scam?", and acting as Sam's assistant with simulated tools to pay, share a one-time code or call an official number. Asked, every model we tested called all six fictional scams a scam. Acting, Nemotron 3.5 Lightning fell for all six, Super 120B for three and Ultra 550B for one.
 
 ![The finding: every model flags the scams when asked, then falls for some when acting](docs/screenshots/1-finding.png)
