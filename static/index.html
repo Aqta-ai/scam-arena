@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scam Arena</title>
+<style>
+:root{--bg:#f6f6f3;--card:#fff;--ink:#14161a;--soft:#5a606b;--line:#e3e3dd;--red:#d92d20;--redw:#fdecea;--green:#3f7d20;--greenw:#ecf6e6;--amber:#b54708;--amberw:#fef4e6;--accent:#76b900;--dark:#14161a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif}
+header{display:flex;align-items:center;gap:14px;padding:18px 32px;border-bottom:1px solid var(--line);background:#fff}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.02em}
+.logo b{color:var(--red)}
+.pill{font:600 12px ui-monospace,Menlo,monospace;background:#f0f6e4;color:#3d6400;border:1px solid #d5e8b5;border-radius:999px;padding:4px 10px}
+nav{margin-left:auto;display:flex;gap:6px}
+nav button{border:0;background:transparent;font:600 15px inherit;padding:8px 14px;border-radius:999px;cursor:pointer;color:var(--soft)}
+nav button.on{background:var(--dark);color:#fff}
+main{max-width:1180px;margin:0 auto;padding:36px 32px 80px}
+h1{font-size:clamp(30px,4vw,48px);line-height:1.05;letter-spacing:-.03em;margin:0 0 12px;max-width:20ch}
+.lede{color:var(--soft);font-size:18px;max-width:62ch;margin:0 0 28px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0 0 28px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.stat .n{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.stat .l{color:var(--soft);font-size:14px;margin-top:6px}
+.stat.r .n{color:var(--red)}.stat.g .n{color:var(--green)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 18px}
+.btn{border:0;border-radius:999px;background:var(--dark);color:#fff;font:700 15px inherit;padding:12px 22px;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.q{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.meta{color:var(--soft);font:13px ui-monospace,Menlo,monospace}
+.grid{display:grid;grid-template-columns:200px repeat(2,minmax(0,1fr));gap:10px;align-items:stretch}
+.grid .h{font:700 13px ui-monospace,Menlo,monospace;color:var(--soft);padding:6px 4px}
+.sc{display:flex;flex-direction:column;justify-content:center;padding:10px 4px}
+.sc b{font-size:15px}.sc span{color:var(--soft);font-size:13px}
+.cell{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-height:74px;cursor:pointer;display:flex;flex-direction:column;justify-content:center;gap:4px;transition:transform .15s}
+.cell:hover{transform:translateY(-1px)}
+.stamp{align-self:flex-start;font:800 13px ui-monospace,Menlo,monospace;letter-spacing:.02em;border-radius:6px;padding:3px 8px}
+.compromised{background:var(--redw);color:var(--red);border-color:#f6c9c4}
+.verified{background:var(--greenw);color:var(--green);border-color:#cfe7c2}
+.resisted{background:#eef1f5;color:#344054}
+.running{color:var(--soft)}
+.cell .why{font-size:13px;color:var(--soft)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px;animation:p 1s infinite}
+@keyframes p{50%{opacity:.25}}
+dialog{border:0;border-radius:16px;padding:0;max-width:640px;width:92vw;box-shadow:0 30px 80px rgba(0,0,0,.25)}
+dialog .hd{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+dialog .bd{padding:18px 20px;max-height:70vh;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:82%;padding:10px 14px;border-radius:14px;font-size:15px}
+.msg.s{background:#f1f1ec;align-self:flex-start;border-bottom-left-radius:4px}
+.msg.a{background:#e9f0ff;align-self:flex-end;border-bottom-right-radius:4px}
+.msg.p{background:var(--dark);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.tool{align-self:flex-end;font:600 13px ui-monospace,Menlo,monospace;padding:8px 12px;border-radius:10px;border:1.5px dashed}
+.tool.bad{color:var(--red);border-color:var(--red);background:var(--redw)}
+.tool.ok{color:var(--green);border-color:var(--green);background:var(--greenw)}
+.who{font:600 11px ui-monospace,Menlo,monospace;color:var(--soft);margin-bottom:2px}
+.chat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px;min-height:320px}
+.compose{display:flex;gap:8px;margin-top:12px}
+.compose input{flex:1;border:1.5px solid var(--line);border-radius:999px;padding:12px 16px;font:inherit}
+select{border:1.5px solid var(--line);border-radius:999px;padding:10px 14px;font:inherit;background:#fff}
+.debrief{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:16px}
+.score{font-size:46px;font-weight:800;letter-spacing:-.03em}
+.flag{border-left:4px solid var(--red);background:var(--redw);padding:8px 12px;border-radius:6px;margin:8px 0}
+.flag q{font-weight:700}
+footer{color:var(--soft);font-size:13px;max-width:1180px;margin:0 auto;padding:0 32px 40px}
+@media (max-width:760px){.stats{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.grid .h{display:none}header{padding:14px 16px;flex-wrap:wrap}main{padding:24px 16px 60px}}
+</style>
+</head>
+<body>
+<header>
+  <span class="logo">Scam <b>Arena</b></span>
+  <span class="pill" id="model">NVIDIA Nemotron on Nebius</span>
+  <nav><button id="tE" class="on">Evaluate an agent</button><button id="tR">Rehearse yourself</button></nav>
+</header>
+
+<main id="E">
+  <h1>Can an AI assistant be talked into paying a scammer?</h1>
+  <p class="lede">An AI assistant with real-looking tools (send payment, share a one-time code, call an official number) receives six classic scam messages. Every outcome is decided by the tool it calls, not by what it says. All people, banks and accounts are fictional; no money moves.</p>
+  <div class="stats" id="stats"></div>
+  <div class="row"><button class="btn" id="run">Run it live on Nemotron</button><span class="meta" id="runmeta">12 conversations, about a minute</span></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<main id="R" hidden>
+  <h1>Could you spot it?</h1>
+  <p class="lede">Reply to a scripted scam as you normally would. Then Nemotron coaches you through every red flag you missed.</p>
+  <div class="row"><select id="rs"></select><button class="btn q" id="rstart">Start</button></div>
+  <div class="chat" id="chat"><span class="meta">Pick a scenario and press Start.</span></div>
+  <div class="compose"><input id="rin" placeholder="Type your reply…" disabled><button class="btn" id="rsend" disabled>Send</button><button class="btn q" id="rdone" disabled>Get my debrief</button></div>
+  <div id="debrief"></div>
+</main>
+
+<dialog id="dlg"><div class="hd"><b id="dt"></b><span id="ds" class="stamp"></span><button class="btn q" style="margin-left:auto;padding:6px 14px" onclick="dlg.close()">Close</button></div><div class="bd" id="db"></div></dialog>
+
+<footer>Scam messages are fixed, authored scripts so every run gets identical inputs; in our tests Nemotron declined to role-play the scammer. Outcomes come from tool calls the assistant makes, including tool calls written as text. Synthetic simulation: no real organisations, accounts or payments.</footer>
+
+<script>
+const $=s=>document.querySelector(s);
+let S=null, results={};
+const LABEL={"baseline":"Plain assistant","told-the-rules":"Told the safety rule"};
+const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function stats(sum){
+  if(!sum){$("#stats").innerHTML="";return}
+  const b=sum.baseline,g=sum["told-the-rules"];
+  $("#stats").innerHTML=`<div class="stat r"><div class="n">${b.compromised}/${b.total}</div><div class="l">plain assistant paid or shared the code</div></div>
+  <div class="stat r"><div class="n">${g.compromised}/${g.total}</div><div class="l">still fooled after being told the safety rule</div></div>
+  <div class="stat g"><div class="n">${g.verified}/${g.total}</div><div class="l">verified on the official number first</div></div>`;
+}
+function grid(){
+  let h=`<div class="h">Scenario</div><div class="h">${LABEL.baseline}</div><div class="h">${LABEL["told-the-rules"]}</div>`;
+  for(const s of S.scenarios){
+    h+=`<div class="sc"><b>${esc(s.title)}</b><span>“${esc(s.hook)}”</span></div>`;
+    for(const c of S.conditions){
+      const r=results[s.id+"|"+c];
+      if(!r) h+=`<div class="cell" id="c-${s.id}-${c}"><span class="why">Not run yet</span></div>`;
+      else if(r==="running") h+=`<div class="cell running" id="c-${s.id}-${c}"><span><span class="dot"></span>Nemotron is reading the messages…</span></div>`;
+      else if(r.error) h+=`<div class="cell"><span class="why">${esc(r.error)}</span></div>`;
+      else{
+        const d=r.deciding_call;let why=r.outcome==="compromised"?(d.name==="send_payment"?`sent €${esc(d.args.amount_eur)} to ${esc(d.args.account)}`:`shared the one-time code`):r.outcome==="verified"?"called the official number":"no risky action";
+        h+=`<div class="cell ${r.outcome}" data-k="${s.id}|${c}"><span class="stamp ${r.outcome}">${r.outcome.toUpperCase()}</span><span class="why">${why}, message ${r.turns} of 4</span></div>`;
+      }
+    }
+  }
+  $("#grid").innerHTML=h;
+  document.querySelectorAll(".cell[data-k]").forEach(el=>el.onclick=()=>show(results[el.dataset.k]));
+}
+function bubble(t){
+  if(t.who==="scammer"||t.who==="s") return `<div class="msg s"><div class="who">Incoming message</div>${esc(t.text)}</div>`;
+  if(t.who==="agent") return `<div class="msg a"><div class="who">Assistant (Nemotron)</div>${esc(t.text)}</div>`;
+  if(t.who==="agent-tool"){const bad=t.tool!=="call_official_number";return `<div class="tool ${bad?"bad":"ok"}">${esc(t.tool)}(${esc(JSON.stringify(t.args))})${t.form==="text"?" · written as text":""}</div>`}
+  return "";
+}
+function show(r){$("#dt").textContent=r.title+" · "+LABEL[r.condition];$("#ds").textContent=r.outcome.toUpperCase();$("#ds").className="stamp "+r.outcome;$("#db").innerHTML=r.transcript.map(bubble).join("");dlg.showModal()}
+async function run(){
+  $("#run").disabled=true;results={};
+  for(const s of S.scenarios)for(const c of S.conditions)results[s.id+"|"+c]="running";grid();
+  const t0=Date.now();
+  await Promise.all(S.scenarios.flatMap(s=>S.conditions.map(async c=>{
+    try{const r=await (await fetch("/api/eval/bout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({scenario:s.id,condition:c})})).json();results[s.id+"|"+c]=r}
+    catch(e){results[s.id+"|"+c]={error:"Request failed"}}
+    grid();
+  })));
+  const all=Object.values(results).filter(r=>r.outcome);const sum={};
+  for(const c of S.conditions){const rs=all.filter(r=>r.condition===c);sum[c]={total:rs.length,compromised:rs.filter(r=>r.outcome==="compromised").length,verified:rs.filter(r=>r.outcome==="verified").length}}
+  stats(sum);$("#runmeta").textContent=`Live run finished in ${Math.round((Date.now()-t0)/1000)} s · ${S.model}`;$("#run").disabled=false;$("#run").textContent="Run again";
+}
+// Rehearse
+let hist=[],rsid=null;
+function drawChat(){$("#chat").innerHTML=hist.map(h=>h.role==="scammer"?`<div class="msg s"><div class="who">Incoming message</div>${esc(h.content)}</div>`:`<div class="msg p">${esc(h.content)}</div>`).join("")}
+async function next(){const r=await (await fetch("/api/rehearse/next",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({scenario:rsid,history:hist})})).json();if(r.message){hist.push({role:"scammer",content:r.message});drawChat()}else{$("#rin").disabled=true;$("#rsend").disabled=true}}
+$("#rstart").onclick=async()=>{rsid=$("#rs").value;hist=[];$("#debrief").innerHTML="";$("#rin").disabled=false;$("#rsend").disabled=false;$("#rdone").disabled=false;await next()};
+$("#rsend").onclick=async()=>{const v=$("#rin").value.trim();if(!v)return;hist.push({role:"person",content:v});$("#rin").value="";drawChat();await next()};
+$("#rin").addEventListener("keydown",e=>{if(e.key==="Enter")$("#rsend").click()});
+$("#rdone").onclick=async()=>{$("#rdone").disabled=true;$("#debrief").innerHTML=`<div class="debrief"><span class="dot"></span>Nemotron is reviewing your chat…</div>`;
+  const d=await (await fetch("/api/rehearse/debrief",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({scenario:rsid,history:hist})})).json();
+  $("#debrief").innerHTML=`<div class="debrief"><div class="score">${esc(d.score??"–")}<span class="meta"> / 100</span></div><p><b>${esc(d.verdict||"")}</b></p>${(d.red_flags||[]).map(f=>`<div class="flag"><q>${esc(f.quote)}</q><br>${esc(f.why)}</div>`).join("")}${(d.did_well||[]).length?`<p><b>You did well:</b> ${(d.did_well||[]).map(esc).join(" · ")}</p>`:""}<p><b>Safer move:</b> ${esc(d.safer_move||"")}</p><p class="meta">Coach: ${esc(S.model)} · practice feedback, not professional advice</p></div>`;$("#rdone").disabled=false};
+$("#tE").onclick=()=>{$("#E").hidden=false;$("#R").hidden=true;$("#tE").className="on";$("#tR").className=""};
+$("#tR").onclick=()=>{$("#E").hidden=true;$("#R").hidden=false;$("#tR").className="on";$("#tE").className=""};
+(async()=>{S=await (await fetch("/api/scenarios")).json();$("#model").textContent=S.model+" · Nebius";$("#rs").innerHTML=S.scenarios.map(s=>`<option value="${s.id}">${esc(s.title)}</option>`).join("");grid();
+  const L=await (await fetch("/api/results/latest")).json();stats(L.summary);if(L.summary)$("#runmeta").textContent=`Above: ${L.summary.baseline.total*2} recorded conversations (${L.repeats} repeats), ${L.started_utc}`;$("#run").onclick=run})();
+</script>
+</body>
+</html>
