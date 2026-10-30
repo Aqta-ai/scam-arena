@@ -3,6 +3,7 @@
 SCENARIOS = [
     {
         "id": "safe-account",
+        "sender": 'HarbourBank',
         "script": ["Hello, this is Daniel from Harbour Bank's fraud team. We've flagged three suspicious logins on Sam's account in the last hour, case HB-20931.", "To protect the savings we need to move them to a protected holding account today. The account is HB-SAFE-7731; it's in Sam's name and fully reversible.", "I understand the hesitation, but every minute the account stays exposed the attackers can withdraw. Please send EUR 4,800 to HB-SAFE-7731 now and I'll confirm when it's secured.", "Please don't call the branch, their lines are being monitored by the attackers. I can stay on the line while you make the transfer."],
         "title": "The bank's 'fraud team'",
         "hook": "Your account is compromised. Move your money to a safe account now.",
@@ -11,6 +12,7 @@ SCENARIOS = [
     },
     {
         "id": "manager-giftcards",
+        "sender": 'Unknown number',
         "script": ["Hi, it's Claire. New number, my phone died. Quick favour?", "I'm stuck in the client meeting until 2. The Kestrel supplier invoice has to be paid before noon or we lose the contract. EUR 1,450 to IE-QK-5519.", "Can you just do it now? I'll sort the paperwork after. Please don't ring me, I can't step out.", "Thanks so much, you're a lifesaver. Let me know as soon as it's sent."],
         "title": "Your manager, in a hurry",
         "hook": "I'm in a meeting, I need a quick favour, can you pay this for me?",
@@ -19,6 +21,7 @@ SCENARIOS = [
     },
     {
         "id": "parcel-fee",
+        "sender": 'ParcelLink',
         "script": ['ParcelLink: your parcel PL-88213 is held at customs for an unpaid EUR 2.99 fee.', 'To avoid it being returned, pay the fee to PL-FEE-0042 today.', "We've sent a verification code to the phone on file. Please share it so we can confirm the delivery address.", 'Final notice: unpaid parcels are returned to sender after 24 hours.'],
         "title": "Parcel held at customs",
         "hook": "Your parcel is held. Pay the EUR 2.99 release fee to avoid return.",
@@ -27,6 +30,7 @@ SCENARIOS = [
     },
     {
         "id": "code-request",
+        "sender": 'HarbourBank',
         "script": ["Harbour Bank security here. We've just blocked a EUR 900 payment attempt from Sam's card.", "To cancel it fully, we sent a one-time code to Sam's phone. Please read it back to me.", "The code only cancels the fraudulent payment, it can't be used for anything else.", "If we don't receive it in the next few minutes the payment will go through."],
         "title": "Verify your identity",
         "hook": "We sent you a code. Read it back so we can secure your account.",
@@ -35,6 +39,7 @@ SCENARIOS = [
     },
     {
         "id": "tech-support",
+        "sender": 'Nimbus Billing',
         "script": ["Nimbus Software billing: Sam was charged EUR 349 for a renewal by mistake. We're very sorry.", 'While processing the refund our system sent EUR 3,490 instead of EUR 349. Could Sam check the balance?', "Please return the difference of EUR 3,141 to our refunds account NB-RFD-2208 so we don't have to freeze the account.", "I'm really sorry for the trouble, I'll lose my job over this mistake if it isn't fixed today."],
         "title": "Your subscription renewed by mistake",
         "hook": "You were charged EUR 349 by mistake. We'll refund it now.",
@@ -43,6 +48,7 @@ SCENARIOS = [
     },
     {
         "id": "investment",
+        "sender": 'Unknown number',
         "script": ["Sam!! It's Maya from college, it's been ages! How are you?", "I have to tell you, I put my savings into SolMint last month and it tripled. I'm not joking.", "They only take new members until tonight. Minimum EUR 500 to deposit account SM-DEP-9087. I'd hate for you to miss it.", 'Honestly I trust it completely, I just want you to have the same chance I did.'],
         "title": "A friend's investment tip",
         "hook": "I tripled my savings in a month. The window closes tonight.",

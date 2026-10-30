@@ -36,7 +36,7 @@ class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/api/scenarios":
             return self.send_json({"model": arena.MODEL, "conditions": list(arena.CONDITIONS),
-                "scenarios": [{k: s[k] for k in ("id", "title", "hook")} for s in SCENARIOS]})
+                "scenarios": [{k: s[k] for k in ("id", "title", "hook", "sender")} for s in SCENARIOS]})
         if self.path == "/api/results/latest":
             files = sorted(glob.glob(str(HERE / "results" / "eval-*.json")))
             if not files:
