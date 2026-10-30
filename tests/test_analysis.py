@@ -6,7 +6,7 @@ from pathlib import Path
 import sys
 import threading
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import app
@@ -21,6 +21,10 @@ def review():
             "red_flags": [{"quote": "Send your one-time code now", "why": "An inbound request for a security code is a warning sign."}],
             "safer_steps": ["Contact the organisation using details you already know."],
             "suggested_reply": ""}
+
+
+def completion(message, finish_reason="stop"):
+    return {"message": message, "finish_reason": finish_reason}
 
 
 class AnalysisTests(unittest.TestCase):
@@ -83,12 +87,16 @@ class AnalysisTests(unittest.TestCase):
         self.assertEqual(arena.validate_analysis_result(obj, SOURCE)["assessment"], "unclear")
 
     def test_analysis_treats_submission_as_data_and_has_no_tools(self):
-        with patch.object(arena, "chat", return_value={"content": json.dumps(review())}) as model:
+        with patch.object(arena, "chat", return_value=completion({"content": json.dumps(review())})) as model:
             result = arena.analyse(" \n" + SOURCE + "\n ")
         args, kwargs = model.call_args
         self.assertEqual(json.loads(args[0][1]["content"]), {"message_text": SOURCE})
         self.assertIn("untrusted evidence", args[0][0]["content"])
         self.assertNotIn("tools", kwargs)
+        self.assertEqual(kwargs["response_format"], arena.ANALYSIS_RESPONSE_FORMAT)
+        self.assertIs(kwargs["enable_thinking"], False)
+        self.assertIs(kwargs["return_choice"], True)
+        self.assertEqual(kwargs["attempts"], 1)
         self.assertEqual(result["model"], arena.MODEL)
         self.assertEqual(result["provider"], "Nebius Token Factory")
         self.assertTrue(result["analysed_at_utc"].endswith("Z"))
@@ -96,10 +104,110 @@ class AnalysisTests(unittest.TestCase):
 
     def test_analysis_rejects_invalid_json_or_model_actions(self):
         for response in ({"content": "not JSON"}, {"content": "{}"}, {"content": None},
-                         {"content": json.dumps(review()), "tool_calls": [{"name": "send_payment"}]}):
-            with self.subTest(response=response), patch.object(arena, "chat", return_value=response):
+                         {"content": json.dumps(review()), "tool_calls": [{"name": "send_payment"}]},
+                         {"content": json.dumps(review()), "function_call": {"name": "send_payment"}},
+                         {"content": json.dumps(review()), "refusal": "Cannot review this."}):
+            with self.subTest(response=response), patch.object(arena, "chat", return_value=completion(response)):
                 with self.assertRaises(arena.AnalysisResponseError):
                     arena.analyse(SOURCE)
+
+    def test_unfinished_analysis_is_rejected_even_with_valid_json(self):
+        for reason in ("length", "content_filter", "tool_calls", None):
+            response = completion({"content": json.dumps(review())}, reason)
+            with self.subTest(finish_reason=reason), patch.object(arena, "chat", return_value=response) as model:
+                with self.assertRaisesRegex(arena.AnalysisResponseError, "did not finish"):
+                    arena.analyse(SOURCE)
+                model.assert_called_once()
+        reasoning_only = completion({"content": "", "reasoning_content": "unfinished reasoning"}, "length")
+        with patch.object(arena, "chat", return_value=reasoning_only):
+            with self.assertRaisesRegex(arena.AnalysisResponseError, "did not finish"):
+                arena.analyse(SOURCE)
+
+    def test_observed_three_field_response_is_rejected_without_local_fill(self):
+        incomplete = review()
+        del incomplete["safer_steps"]
+        del incomplete["suggested_reply"]
+        with patch.object(arena, "chat", return_value=completion({"content": json.dumps(incomplete)})) as model:
+            with self.assertRaisesRegex(arena.AnalysisResponseError, "analysis fields only"):
+                arena.analyse(SOURCE)
+        self.assertEqual(set(incomplete), {"assessment", "summary", "red_flags"})
+        model.assert_called_once()
+
+    def test_analysis_transport_uses_bounded_json_nonreasoning_request(self):
+        choice = completion({"content": json.dumps(review())})
+        response = Mock()
+        response.json.return_value = {"choices": [choice]}
+        with patch.dict(os.environ, {"NEBIUS_API_KEY": "offline-test-only"}), \
+                patch.object(arena.httpx, "post", return_value=response) as post:
+            self.assertEqual(arena.analyse(SOURCE)["assessment"], "warning-signs")
+        body = post.call_args.kwargs["json"]
+        self.assertEqual(body["response_format"]["type"], "json_schema")
+        contract = body["response_format"]["json_schema"]
+        self.assertIs(contract["strict"], True)
+        schema = contract["schema"]
+        self.assertIs(schema["additionalProperties"], False)
+        self.assertEqual(set(schema["required"]), arena.ANALYSIS_KEYS)
+        self.assertEqual(set(schema["properties"]), arena.ANALYSIS_KEYS)
+        self.assertEqual(set(schema["properties"]["assessment"]["enum"]), arena.ANALYSIS_ASSESSMENTS)
+        flags = schema["properties"]["red_flags"]
+        self.assertEqual(flags["maxItems"], 8)
+        self.assertIs(flags["items"]["additionalProperties"], False)
+        self.assertEqual(set(flags["items"]["required"]), {"quote", "why"})
+        self.assertEqual(schema["properties"]["safer_steps"]["minItems"], 1)
+        self.assertIn('"safer_steps":["..."]', body["messages"][0]["content"])
+        self.assertIn('"suggested_reply":""', body["messages"][0]["content"])
+        self.assertEqual(body["chat_template_kwargs"], {"enable_thinking": False})
+        self.assertEqual((body["temperature"], body["max_tokens"]), (0.1, 4000))
+        self.assertNotIn("tools", body)
+        self.assertNotIn("tool_choice", body)
+        post.assert_called_once()
+
+    def test_analysis_transport_preserves_truncation_and_does_not_retry(self):
+        response = Mock()
+        response.json.return_value = {"choices": [completion({"content": json.dumps(review())}, "length")]}
+        with patch.dict(os.environ, {"NEBIUS_API_KEY": "offline-test-only"}), \
+                patch.object(arena.httpx, "post", return_value=response) as post:
+            with self.assertRaisesRegex(arena.AnalysisResponseError, "did not finish"):
+                arena.analyse(SOURCE)
+        post.assert_called_once()
+        with patch.dict(os.environ, {"NEBIUS_API_KEY": "offline-test-only"}), \
+                patch.object(arena.httpx, "post", side_effect=arena.httpx.ConnectTimeout("Offline fixture")) as post, \
+                patch.object(arena.time, "sleep") as sleep:
+            with self.assertRaises(RuntimeError):
+                arena.analyse(SOURCE)
+        post.assert_called_once()
+        sleep.assert_not_called()
+        response = Mock()
+        response.raise_for_status.side_effect = arena.httpx.HTTPStatusError(
+            "Unsupported schema fixture", request=arena.httpx.Request("POST", "https://fixture.invalid"),
+            response=arena.httpx.Response(400))
+        with patch.dict(os.environ, {"NEBIUS_API_KEY": "offline-test-only"}), \
+                patch.object(arena.httpx, "post", return_value=response) as post:
+            with self.assertRaises(RuntimeError):
+                arena.analyse(SOURCE)
+        post.assert_called_once()
+
+    def test_evaluation_and_coaching_transport_options_are_unchanged(self):
+        response = Mock()
+        response.json.side_effect = [
+            {"choices": [completion({"content": None, "tool_calls": [{"id": "fictional-1", "function": {
+                "name": "send_payment", "arguments": '{"account":"fictional","amount_eur":10}'}}]})]},
+            {"choices": [completion({"content": '{"score": 50, "verdict": "Practise independent verification."}'})]},
+        ]
+        sid = next(iter(app.BY_ID))
+        with patch.dict(os.environ, {"NEBIUS_API_KEY": "offline-test-only"}), \
+                patch.object(arena.httpx, "post", return_value=response) as post:
+            self.assertEqual(arena.run_bout(sid, "baseline")["outcome"], "compromised")
+            self.assertEqual(arena.debrief(sid, [])["score"], 50)
+        self.assertEqual(post.call_count, 2)
+        agent_body, coach_body = [call.kwargs["json"] for call in post.call_args_list]
+        self.assertEqual((agent_body["temperature"], agent_body["max_tokens"]), (0.0, 1200))
+        self.assertEqual(agent_body["tools"], arena.TOOLS)
+        self.assertEqual(agent_body["tool_choice"], "auto")
+        self.assertEqual((coach_body["temperature"], coach_body["max_tokens"]), (0.2, 4000))
+        for body in (agent_body, coach_body):
+            self.assertNotIn("response_format", body)
+            self.assertNotIn("chat_template_kwargs", body)
 
     def test_rate_window_and_concurrency_limits(self):
         now = [100.0]
@@ -149,7 +257,7 @@ class AnalysisHttpTests(unittest.TestCase):
         return result
 
     def test_analysis_does_not_require_a_scenario(self):
-        with patch.object(arena, "chat", return_value={"content": json.dumps(review())}):
+        with patch.object(arena, "chat", return_value=completion({"content": json.dumps(review())})):
             status, headers, body = self.request({"text": "  " + SOURCE + "  "})
         self.assertEqual(status, 200)
         self.assertEqual(body["red_flags"][0]["quote"], "Send your one-time code now")
@@ -177,14 +285,16 @@ class AnalysisHttpTests(unittest.TestCase):
         self.assertEqual(app.ANALYSIS_LIMITS.active, 0)
 
     def test_invalid_model_response_is_502_and_releases_slot(self):
-        with patch.object(arena, "chat", return_value={"content": "not JSON"}):
-            status, _, body = self.request({"text": SOURCE})
-        self.assertEqual(status, 502)
-        self.assertIn("evidence-grounded", body["error"])
-        self.assertEqual(app.ANALYSIS_LIMITS.active, 0)
+        for choice in (completion({"content": "not JSON"}),
+                       completion({"content": json.dumps(review())}, "length")):
+            with self.subTest(choice=choice), patch.object(arena, "chat", return_value=choice):
+                status, _, body = self.request({"text": SOURCE})
+            self.assertEqual(status, 502)
+            self.assertIn("evidence-grounded", body["error"])
+            self.assertEqual(app.ANALYSIS_LIMITS.active, 0)
 
     def test_five_starts_per_ip_and_forwarded_headers_do_not_bypass(self):
-        with patch.object(arena, "chat", return_value={"content": json.dumps(review())}) as model:
+        with patch.object(arena, "chat", return_value=completion({"content": json.dumps(review())})) as model:
             statuses = [self.request({"text": SOURCE}, headers={"X-Forwarded-For": f"192.0.2.{n}"}) for n in range(6)]
         self.assertEqual([r[0] for r in statuses], [200] * 5 + [429])
         self.assertGreaterEqual(int(statuses[-1][1]["Retry-After"]), 1)
@@ -203,7 +313,7 @@ class AnalysisHttpTests(unittest.TestCase):
                 if count[0] == 2:
                     entered.set()
             release.wait(4)
-            return {"content": json.dumps(review())}
+            return completion({"content": json.dumps(review())})
 
         def run_request():
             outcomes.append(self.request({"text": SOURCE})[0])

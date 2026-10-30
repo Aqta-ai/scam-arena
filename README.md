@@ -54,6 +54,10 @@ Tests mock model calls and need no key. Evaluation makes live provider requests 
 
 `POST /api/analyse` accepts `{"text":"..."}`. The server validates 1 to 4,000 characters and the model's result schema, requires quoted evidence to match input text, and returns server-owned model/provider/time metadata. A message is data, not an instruction for the model. No analysis tools or URL retrieval are supplied.
 
+Analysis requests a strict five-field JSON schema with thinking disabled and a 4,000-token cap. Reasoning and the visible answer otherwise share Nemotron's output budget. The server requires a completed response with `finish_reason: "stop"` before independently validating the JSON and exact source quotes; truncated output, refusals and tool calls are errors, never a substitute verdict. Each analysis makes one provider request, without an automatic retry or a fallback to a weaker output format. Evaluation and coaching keep their existing request settings. These controls address output-format failures; they do not establish detection accuracy or guarantee a model response.
+
+A bounded live format check on 30 October 2026 analysed each of the six full authored scripts once. All six completed responses passed the strict schema and exact-source-quote validation. This checks response format on those synthetic inputs, not scam-detection accuracy or safety on other messages.
+
 Analysis is limited to five accepted starts per minute per direct client address and two in flight in this single process. Production hosting needs appropriate proxy, TLS, request and spending controls. The current development server binds to localhost. Existing evaluation/coaching endpoints are not covered by the new analysis limiter.
 
 `400` invalid input, `413` oversized HTTP body, `429` rate/concurrency limit with Retry-After, `503` no provider connection, and `502` failed or invalid model response. No probability percentage is presented as calibrated risk.
