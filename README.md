@@ -1,6 +1,22 @@
 # Scam Arena
 
-Check a suspicious email, text or letter, then explore how a person or an AI assistant responds to the same kinds of pressure.
+**It knows it's a scam. It pays anyway.** Scam Arena puts the same message to NVIDIA Nemotron two ways: asked "is this a scam?", and acting as Sam's assistant with simulated tools to pay, share a one-time code or call an official number. Asked, every model we tested called all six fictional scams a scam. Acting, Nemotron 3.5 Lightning fell for all six, Super 120B for three and Ultra 550B for one.
+
+![The finding: every model flags the scams when asked, then falls for some when acting](docs/screenshots/1-finding.png)
+
+**Your own message, both ways.** A fake exchange-support message after the Binance hack: asked, it said scam 3 of 3 times; acting, it requested €4,200 to the scammer's wallet.
+
+![A custom test: said scam 3 of 3 times, then requested a €4,200 payment](docs/screenshots/2-falls-for-it.png)
+
+**Check the action.** The same recorded actions, checked before they run: pay only saved payees, never share a code. Nothing leaves the account.
+
+![Check the action: the payment to a new payee is refused](docs/screenshots/3-check-the-action.png)
+
+**Read a screenshot.** Nemotron 3.5 Super VL transcribes an uploaded message; you check the text before running it.
+
+![A screenshot transcribed for review before the test runs](docs/screenshots/4-read-a-screenshot.png)
+
+All people, accounts and money are fictional. Tools and balances are simulated; no real payment is made.
 
 ## Start with a message
 
