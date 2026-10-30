@@ -37,6 +37,12 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path == "/api/scenarios":
             return self.send_json({"model": arena.MODEL, "conditions": list(arena.CONDITIONS),
                 "scenarios": [{k: s[k] for k in ("id", "title", "hook", "sender")} for s in SCENARIOS]})
+        if self.path == "/api/results/bouts":
+            files = sorted(glob.glob(str(HERE / "results" / "eval-*.json")))
+            if not files:
+                return self.send_json({"bouts": []})
+            d = json.loads(Path(files[-1]).read_text())
+            return self.send_json({"bouts": [b for b in d["bouts"] if b.get("repeat") == 0], "live": bool(os.environ.get("NEBIUS_API_KEY"))})
         if self.path == "/api/results/latest":
             files = sorted(glob.glob(str(HERE / "results" / "eval-*.json")))
             if not files:
@@ -51,6 +57,8 @@ class Handler(SimpleHTTPRequestHandler):
             sid = body.get("scenario")
             if sid not in BY_ID:
                 return self.send_json({"error": "unknown scenario"}, 400)
+            if self.path != "/api/rehearse/next" and not os.environ.get("NEBIUS_API_KEY"):
+                return self.send_json({"error": "Replay mode: set NEBIUS_API_KEY to run Nemotron live."}, 503)
             if self.path == "/api/rehearse/next":
                 history = [h for h in body.get("history", []) if h.get("role") in ("scammer", "person")][:12]
                 return self.send_json({"message": arena.scammer_turn(sid, history)})
@@ -69,7 +77,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     if not os.environ.get("NEBIUS_API_KEY"):
-        raise SystemExit("Set NEBIUS_API_KEY (your Nebius Token Factory key) first.")
+        print("No NEBIUS_API_KEY: replay mode. Recorded Nemotron conversations are shown; live runs and the coach are off.")
     port = int(os.environ.get("PORT", "8090"))
     print(f"Scam Arena on http://127.0.0.1:{port}  model {arena.MODEL}")
     ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()

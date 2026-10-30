@@ -31,6 +31,8 @@ python3 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
 export NEBIUS_API_KEY=...        # your Nebius Token Factory key, server side only
 python app.py                    # open http://127.0.0.1:8090
+# No key? `python app.py` still starts in replay mode: the recorded Nemotron conversations
+# are shown and clickable; live runs and the coach need NEBIUS_API_KEY.
 python run_eval.py --repeats 3   # reproduce the table; writes results/eval-*.json
 ```
 

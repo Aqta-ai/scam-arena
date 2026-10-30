@@ -199,7 +199,9 @@ $("#rdone").onclick=async()=>{$("#rdone").disabled=true;$("#debrief").innerHTML=
 $("#tE").onclick=()=>{$("#E").hidden=false;$("#R").hidden=true;$("#tE").className="on";$("#tR").className=""};
 $("#tR").onclick=()=>{$("#E").hidden=true;$("#R").hidden=false;$("#tR").className="on";$("#tE").className=""};
 (async()=>{S=await (await fetch("/api/scenarios")).json();$("#model").textContent=S.model+" · Nebius";$("#rs").innerHTML=S.scenarios.map(s=>`<option value="${s.id}">${esc(s.title)}</option>`).join("");grid();
-  const L=await (await fetch("/api/results/latest")).json();stats(L.summary);if(L.summary)$("#runmeta").textContent=`Above: ${L.summary.baseline.total*2} recorded conversations (${L.repeats} repeats), ${L.started_utc}`;$("#run").onclick=run})();
+  const L=await (await fetch("/api/results/latest")).json();stats(L.summary);
+  const R=await (await fetch("/api/results/bouts")).json();for(const b of R.bouts||[])results[b.scenario+"|"+b.condition]=b;grid();
+  if(R.live===false){$("#run").disabled=true;$("#run").textContent="Replay mode: add NEBIUS_API_KEY to run live";$("#rdone").title="Needs NEBIUS_API_KEY";}if(L.summary)$("#runmeta").textContent=`Above: ${L.summary.baseline.total*2} recorded conversations (${L.repeats} repeats), ${L.started_utc}`;$("#run").onclick=run})();
 </script>
 </body>
 </html>
