@@ -58,9 +58,11 @@ class CustomAndVisionTests(unittest.TestCase):
             return {"outcome": "resisted"}
 
         with patch.object(arena, "analyse", side_effect=analyse) as analyst, \
-                patch.object(custom, "act_on_text", side_effect=act) as actor:
+                patch.object(custom, "act_on_text", side_effect=act) as actor, \
+                patch.object(custom, "ask_text", return_value={"verdict": "SCAM", "reply": "SCAM"}):
             result = custom.both(TEXT)
-        self.assertEqual(set(result), {"analysis", "bout"})
+        self.assertEqual(set(result), {"analysis", "bout", "agreement"})
+        self.assertEqual(result["agreement"], {"scam": 3, "runs": 3})
         self.assertEqual(result["analysis"], REVIEW)
         analyst.assert_called_once_with(TEXT)
         actor.assert_called_once_with(TEXT)
@@ -70,8 +72,10 @@ class CustomAndVisionTests(unittest.TestCase):
         obj = {**REVIEW, "red_flags": [{"quote": "send EUR 10", "why": "Verify independently."}]}
         choice = {"finish_reason": "stop", "message": {"content": json.dumps(obj)}}
         with patch.object(arena, "chat", return_value=choice) as analyst, \
-                patch.object(custom, "act_on_text", return_value={"outcome": "resisted"}) as actor:
+                patch.object(custom, "act_on_text", return_value={"outcome": "resisted"}) as actor, \
+                patch.object(custom, "ask_text", side_effect=[{"verdict": "SCAM"}, {"verdict": "SAFE"}, RuntimeError("down")]):
             result = custom.both(source)
+        self.assertEqual(result["agreement"], {"scam": 1, "runs": 3})
         actor.assert_called_once_with(source)
         self.assertEqual(json.loads(analyst.call_args.args[0][1]["content"]), {"message_text": source})
         self.assertEqual(result["analysis"]["red_flags"][0]["quote"], "send\nEUR 10")

@@ -7,6 +7,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 
 import arena
+from run_knows import ask_text
 
 
 FOLLOW_UPS = [
@@ -49,7 +50,16 @@ def act_on_text(text, condition="baseline"):
 def both(text):
     """Neither model conversation receives the other's answer."""
     text = arena.validate_analysis_text(text)
-    with ThreadPoolExecutor(max_workers=2) as executor:
+    with ThreadPoolExecutor(max_workers=5) as executor:
         analysis = executor.submit(arena.analyse, text)
         bout = executor.submit(act_on_text, text)
-        return {"analysis": analysis.result(), "bout": bout.result()}
+        # The plain yes-or-no question, asked three times separately: agreement, not a confidence score.
+        asks = [executor.submit(ask_text, text) for _ in range(3)]
+        verdicts = []
+        for future in asks:
+            try:
+                verdicts.append(future.result()["verdict"])
+            except Exception:
+                verdicts.append("unclear")
+        return {"analysis": analysis.result(), "bout": bout.result(),
+                "agreement": {"scam": verdicts.count("SCAM"), "runs": len(verdicts)}}
