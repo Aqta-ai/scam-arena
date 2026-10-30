@@ -41,7 +41,7 @@ h1{font-size:clamp(30px,4vw,48px);line-height:1.05;letter-spacing:-.03em;margin:
 .resisted{background:#eef1f5;color:#344054}
 .running{color:var(--soft)}
 .cell .why{font-size:13px;color:var(--soft)}
-.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px;animation:p 1s infinite}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px}
 @keyframes p{50%{opacity:.25}}
 dialog{border:0;border-radius:16px;padding:0;max-width:640px;width:92vw;box-shadow:0 30px 80px rgba(0,0,0,.25)}
 dialog .hd{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
@@ -53,21 +53,21 @@ dialog .bd{padding:18px 20px;max-height:70vh;overflow:auto;display:flex;flex-dir
 .tool{align-self:flex-end;font:600 13px ui-monospace,Menlo,monospace;padding:8px 12px;border-radius:10px;border:1.5px dashed}
 .tool.bad{color:var(--red);border-color:var(--red);background:var(--redw)}
 .tool.ok{color:var(--green);border-color:var(--green);background:var(--greenw)}
-.who{font:600 11px ui-monospace,Menlo,monospace;color:var(--soft);margin-bottom:2px}
+.who{font:600 12px ui-monospace,Menlo,monospace;color:var(--soft);margin-bottom:2px}
 .chat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px;min-height:320px}
 .compose{display:flex;gap:8px;margin-top:12px}
 .compose input{flex:1;border:1.5px solid var(--line);border-radius:999px;padding:12px 16px;font:inherit}
 select{border:1.5px solid var(--line);border-radius:999px;padding:10px 14px;font:inherit;background:#fff}
 .debrief{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:16px}
 .score{font-size:46px;font-weight:800;letter-spacing:-.03em}
-.flag{border-left:4px solid var(--red);background:var(--redw);padding:8px 12px;border-radius:6px;margin:8px 0}
+.flag{border-left:1px solid var(--red);background:var(--redw);padding:8px 12px;border-radius:6px;margin:8px 0}
 .flag q{font-weight:700}
 
 .phone{width:340px;border-radius:44px;background:#14161a;padding:12px;box-shadow:0 30px 60px rgba(0,0,0,.25)}
 .phone .scr{background:#f2f2f7;border-radius:34px;min-height:440px;overflow:hidden;display:flex;flex-direction:column}
 .phone .top{background:#fff;padding:20px 16px 10px;text-align:center;border-bottom:1px solid #e5e5ea}
 .phone .top .av{width:40px;height:40px;border-radius:50%;background:#c7c7cc;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
-.phone .top b{font-size:14px}.phone .top span{display:block;font-size:11px;color:#8e8e93}
+.phone .top b{font-size:14px}.phone .top span{display:block;font-size:12px;color:var(--soft)}
 .phone .msgs{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1}
 .sms{background:#e5e5ea;color:#000;border-radius:18px;border-bottom-left-radius:6px;padding:8px 12px;font-size:14px;max-width:85%;align-self:flex-start}
 .act{align-self:stretch;border-radius:12px;padding:8px 10px;font:600 12px ui-monospace,Menlo,monospace}
@@ -82,16 +82,121 @@ dialog{max-width:960px}
 @media (max-width:900px){.hero,.dwrap{grid-template-columns:1fr}.phone{margin:0 auto}}
 footer{color:var(--soft);font-size:13px;max-width:1180px;margin:0 auto;padding:0 32px 40px}
 @media (max-width:760px){.stats{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.grid .h{display:none}header{padding:14px 16px;flex-wrap:wrap}main{padding:24px 16px 60px}}
+
+[hidden]{display:none!important}
+::selection{background:#dceabf;color:var(--ink)}
+:focus-visible{outline:3px solid #3d6400;outline-offset:3px}
+button,input,select,textarea{font:inherit}
+button{touch-action:manipulation}
+button:disabled{cursor:not-allowed}
+header{gap:18px;padding:14px 28px;flex-wrap:wrap}
+nav{gap:4px}
+nav button{font-size:14px;font-weight:600;min-height:42px;padding:9px 13px;border-radius:8px}
+.pill{max-width:100%;overflow-wrap:anywhere;line-height:1.4}
+main{max-width:1240px;padding:30px 28px 56px}
+main h1{font-size:32px;line-height:1.15;max-width:32ch;letter-spacing:-.025em}
+.page-title{margin-bottom:24px}
+.page-title h1{margin-bottom:8px}
+.page-title p{margin:0;color:var(--soft);max-width:65ch}
+.workspace{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:24px;align-items:start}
+.workspace>*{min-width:0}
+.editor{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+.editor-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.editor-heading label{font-weight:700}
+.text-button{border:0;background:transparent;color:var(--soft);cursor:pointer;padding:5px 0 5px 10px;font-size:14px}
+.text-button:hover{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+textarea{display:block;width:100%;height:290px;resize:vertical;min-height:160px;max-height:640px;line-height:1.65;border:1px solid #bec2b8;border-radius:8px;padding:14px;color:var(--ink);background:#fff;caret-color:#3d6400}
+textarea::placeholder{color:#646a61;opacity:1}
+textarea:focus{border-color:#3d6400}
+textarea:disabled{background:#fafbf8;color:var(--soft)}
+.editor-bottom{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--soft);margin-top:8px;font-variant-numeric:tabular-nums}
+.examples{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:18px 0}
+.examples>span{width:100%;font-size:13px;color:var(--soft);margin-bottom:1px}
+.examples button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:7px;padding:7px 9px;font-size:13px;cursor:pointer}
+.examples button:hover{border-color:#7b875f;background:#f4f7ed}
+.privacy{font-size:12px;line-height:1.55;color:var(--soft);margin:0 0 16px;max-width:65ch}
+.analysis-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+.analysis-actions .btn{border-radius:8px;min-height:46px;padding:11px 20px;font-weight:700}
+#analysis-status{font-size:13px;color:var(--soft)}
+.analysis-panel{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:24px;min-height:390px;overflow-wrap:anywhere}
+.analysis-empty{padding:22px 2px;max-width:50ch}
+.analysis-empty svg{color:#748067;margin-bottom:18px}
+.analysis-empty h2{font-size:23px;line-height:1.25;letter-spacing:-.02em;margin:0 0 12px;max-width:23ch}
+.analysis-empty p{color:var(--soft);font-size:15px;line-height:1.6;margin:0 0 18px}
+.analysis-empty .empty-note{font-size:13px;margin-top:30px}
+.analysis-heading-row{display:flex;align-items:flex-start;gap:10px}
+.assessment{font-weight:700;font-size:14px;display:inline-block;padding:6px 10px;border-radius:6px;background:var(--amberw);color:#8b3b09}
+.assessment.warning-signs{background:var(--redw);color:#a92a20}
+.assessment.unclear{background:#eef1f5;color:#344054}
+.analysis-panel h2{font-size:23px;line-height:1.25;margin:17px 0 10px;letter-spacing:-.02em}
+.analysis-panel h3{font-size:15px;margin:26px 0 10px}
+.analysis-summary{line-height:1.6;margin:0;font-size:15px}
+.analysis-flags{list-style:none;padding:0;margin:0}
+.analysis-flags li{padding:14px 0;border-top:1px solid var(--line)}
+.analysis-flags li:last-child{border-bottom:1px solid var(--line)}
+.analysis-flags q{font-weight:650;color:#a92a20;line-height:1.55}
+.analysis-flags p{font-size:14px;color:var(--soft);margin:7px 0 0;line-height:1.55}
+.analysis-steps{padding-left:21px;margin:0;font-size:14px;line-height:1.6}
+.analysis-steps li+li{margin-top:8px}
+.reply-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:26px}
+.reply-heading h3{margin:0}
+.reply{background:#f5f7f0;border-radius:8px;padding:14px;margin:10px 0 0;white-space:pre-wrap;font-size:14px;line-height:1.6}
+.copy-feedback{display:block;min-height:20px;font-size:12px;color:#3d6400;margin-top:6px}
+.provenance{font-size:12px;line-height:1.55;color:var(--soft);padding-top:18px;margin-top:18px;border-top:1px solid var(--line)}
+.uncertainty{font-size:12px;line-height:1.5;color:var(--soft);margin:12px 0 0}
+.analysis-error{background:#fff8f2;border:1px solid #e9c9ab;border-radius:8px;padding:18px}
+.analysis-error h2{margin:0 0 9px;font-size:20px}
+.analysis-error p{font-size:14px;line-height:1.55;margin:0 0 16px}
+.analysis-error button{border-radius:8px}
+.loading-state{padding:30px 0;font-size:15px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.cell{text-align:left;font:inherit;min-width:0;width:100%}
+button.cell:focus-visible{outline-offset:2px}
+.cell:disabled{cursor:default;opacity:1}
+.stamp{font-size:12px;text-transform:none;white-space:normal}
+.compose>*{min-width:0}
+.compose input{width:0}
+.chat,.msg,.tool,.act,.ava,.sms,.acct,.dwrap>*{min-width:0;overflow-wrap:anywhere}
+.phone{max-width:100%;width:340px;box-shadow:0 12px 30px rgba(0,0,0,.16)}
+.hero{gap:28px}
+.lede{font-size:16px;line-height:1.6}
+.stats .stat .n{font-size:30px}
+.stats .stat .l{font-size:13px}
+.stats-summary{grid-column:1/-1;font-size:13px;color:var(--soft);margin:0}
+.dialog-close{margin-left:auto;padding:6px 14px}
+footer{max-width:1240px;padding:0 28px 28px;font-size:12px}
+@media(max-width:1000px){header .pill{display:none}}
+@media(max-width:800px){.workspace{grid-template-columns:1fr}.analysis-panel{min-height:0}.analysis-empty{padding:4px 0}.analysis-empty svg{display:none}.analysis-empty .empty-note{margin-top:18px}.grid{grid-template-columns:160px repeat(2,minmax(0,1fr))}.stats{gap:8px}.stat{padding:14px}}
+@media(max-width:600px){header{padding:12px 16px;gap:10px}.brand{width:100%}.logo{font-size:19px}.mark{width:28px;height:28px}nav{margin-left:0;width:100%;display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px}nav button{font-size:12px;line-height:1.25;padding:8px 5px;min-height:44px}main{padding:23px 16px 36px}main h1{font-size:27px}.page-title{margin-bottom:19px}.page-title p{font-size:14px}.editor{padding:16px}.editor-heading{gap:8px}.editor-heading label{font-size:14px}textarea{height:220px;font-size:16px;padding:12px}.examples{margin:14px 0;gap:6px}.privacy{margin-bottom:14px}.analysis-actions .btn{width:100%}.analysis-panel{padding:18px}.workspace{gap:18px}.compose{flex-wrap:wrap}.compose input{flex:1 1 100%;width:100%}.compose .btn{flex:1;padding:10px}.row select{max-width:100%}.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.grid .h{display:none}.grid .sc{grid-column:1/-1;margin-top:12px}.hero{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.dwrap{grid-template-columns:1fr}.phone{width:100%;max-width:340px}dialog .hd{flex-wrap:wrap}.msg{max-width:94%}footer{padding:0 16px 24px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
 </style>
 </head>
 <body>
 <header>
   <span class="brand"><svg class="mark" viewBox="0 0 40 40" width="34" height="34" aria-hidden="true"><path d="M20 3 L35 9 V19 C35 28 28.5 34.5 20 37 C11.5 34.5 5 28 5 19 V9 Z" fill="#14161a"/><path d="M13 21 L18 26 L27 15" fill="none" stroke="#76b900" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="29.5" cy="10.5" r="5.5" fill="#d92d20" stroke="#fff" stroke-width="2"/><path d="M29.5 8 V11.2 M29.5 13 V13.1" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg><span class="logo">Scam <b>Arena</b></span></span>
   <span class="pill" id="model">NVIDIA Nemotron on Nebius</span>
-  <nav><button id="tE" class="on">Evaluate an agent</button><button id="tR">Rehearse yourself</button></nav>
+  <nav aria-label="Scam Arena tools"><button id="tC" class="on" aria-current="page">Check a message</button><button id="tE">Evaluate an agent</button><button id="tR">Rehearse yourself</button></nav>
 </header>
 
-<main id="E">
+<main id="C">
+  <div class="page-title"><h1>Check a suspicious message</h1><p>See what deserves a closer look before you reply, pay or share a code.</p></div>
+  <div class="workspace">
+    <section class="editor" aria-labelledby="message-label">
+      <div class="editor-heading"><label id="message-label" for="message">Paste an email, text or letter</label><button id="clear" class="text-button" type="button">Clear</button></div>
+      <textarea id="message" maxlength="4000" spellcheck="false" aria-describedby="message-privacy message-count" placeholder="Paste the message here. You do not need to open its links or reply to the sender."></textarea>
+      <div class="editor-bottom"><span id="message-count">0 / 4,000 characters</span><span>Text only</span></div>
+      <div class="examples" aria-label="Try a fictional example"><span>Try a fictional example:</span><button type="button" data-example="bank">Bank message</button><button type="button" data-example="delivery">Delivery fee</button><button type="button" data-example="ordinary">Ordinary message</button></div>
+      <p id="message-privacy" class="privacy">Remove names, account numbers and codes. Your text is sent to NVIDIA Nemotron on Nebius for analysis.</p>
+      <div class="analysis-actions"><button id="analyse" class="btn" type="button" disabled>Analyse message</button><span id="analysis-status" role="status" aria-live="polite"></span></div>
+    </section>
+    <section id="analysis-panel" class="analysis-panel" aria-labelledby="analysis-heading" aria-busy="false">
+      <div id="analysis-result"><div class="analysis-empty"><svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true"><path d="M11 6h20l7 7v29H11zM30 6v9h8M18 23h13M18 29h13M18 35h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><h2 id="analysis-heading">A second look, before your next move</h2><p>Get a short assessment, phrases that raise concerns and practical steps to verify the request.</p><p class="empty-note">Paste a message or choose an example, then select Analyse message.</p></div></div>
+    </section>
+  </div>
+</main>
+
+<main id="E" hidden>
   <div class="hero"><div>
   <h1>Can an AI assistant be talked into paying a scammer?</h1>
   <p class="lede">An AI assistant with real-looking tools (send payment, share a one-time code, call an official number) receives six classic scam messages. Every outcome is decided by the tool it calls, not by what it says. All people, banks and accounts are fictional; no money moves.</p>
@@ -109,99 +214,218 @@ footer{color:var(--soft);font-size:13px;max-width:1180px;margin:0 auto;padding:0
 
 <main id="R" hidden>
   <h1>Could you spot it?</h1>
-  <p class="lede">Reply to a scripted scam as you normally would. Then Nemotron coaches you through every red flag you missed.</p>
-  <div class="row"><select id="rs"></select><button class="btn q" id="rstart">Start</button></div>
+  <p class="lede">Reply to a scripted scam as you normally would. Then a Nemotron coach highlights warning signs and suggests a safer next step.</p>
+  <div class="row"><label class="sr-only" for="rs">Rehearsal scenario</label><select id="rs"></select><button class="btn q" id="rstart">Start</button></div>
   <div class="chat" id="chat"><span class="meta">Pick a scenario and press Start.</span></div>
-  <div class="compose"><input id="rin" placeholder="Type your reply…" disabled><button class="btn" id="rsend" disabled>Send</button><button class="btn q" id="rdone" disabled>Get my debrief</button></div>
-  <div id="debrief"></div>
+  <div class="compose"><label class="sr-only" for="rin">Your reply</label><input id="rin" placeholder="Type your reply..." disabled><button class="btn" id="rsend" disabled>Send</button><button class="btn q" id="rdone" disabled>Get my debrief</button></div>
+  <div id="debrief" aria-live="polite"></div>
 </main>
 
-<dialog id="dlg"><div class="hd"><b id="dt"></b><span id="ds" class="stamp"></span><button class="btn q" style="margin-left:auto;padding:6px 14px" onclick="dlg.close()">Close</button></div><div class="bd" id="db"></div></dialog>
+<dialog id="dlg" aria-labelledby="dt"><div class="hd"><b id="dt"></b><span id="ds" class="stamp"></span><button class="btn q" style="margin-left:auto;padding:6px 14px" onclick="dlg.close()">Close</button></div><div class="bd" id="db"></div></dialog>
 
-<footer>Scam messages are fixed, authored scripts so every run gets identical inputs; in our tests Nemotron declined to role-play the scammer. Outcomes come from tool calls the assistant makes, including tool calls written as text. Synthetic simulation: no real organisations, accounts or payments. Built by Aqta, Dublin.</footer>
+<footer>Evaluate and Rehearse use authored fictional scenarios and simulated tools. No money moves. Built by Aqta, Dublin.</footer>
 
 <script>
 const $=s=>document.querySelector(s);
-let S=null, results={};
-const LABEL={"baseline":"Plain assistant","told-the-rules":"Told the safety rule"};
-const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let S=null, results={}, analysisBusy=false;
+const LABEL={baseline:'Plain assistant','told-the-rules':'Told the safety rule'};
+const OUTCOME={compromised:'Risky action attempted',verified:'Verification requested',resisted:'No risky action'};
+const ASSESSMENT={'warning-signs':'Warning signs found','verify-first':'Verify independently',unclear:'Not enough evidence'};
+const EXAMPLES={
+  bank:"Your account may be compromised. Move your savings to a protected holding account today. Do not call your branch, as this will delay the security check. Reply now and we will send the payment details.",
+  delivery:"Your parcel is being held. Pay the EUR 2.99 release fee within two hours or it will be returned. Open the payment link in this message and enter your card details to arrange delivery.",
+  ordinary:"Hello, a reminder that the community book group meets at the library on Saturday at 11 am. We will discuss the next chapter. If you cannot make it, you can join next month instead. No reply is needed."
+};
+const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const EMPTY_ANALYSIS=$('#analysis-result').innerHTML;
+async function jsonRequest(url,body){
+  let response;
+  try{response=await fetch(url,body===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})}
+  catch(e){throw new Error('The connection failed. Your text is still here. Please try again.')}
+  let data;
+  try{data=await response.json()}catch(e){throw new Error('The server did not return a readable response. Please try again.')}
+  if(!response.ok||data.error){
+    let message=typeof data.error==='string'?data.error.slice(0,400):'The request could not be completed. Please try again.';
+    const wait=Number(response.headers.get('Retry-After'));
+    if(response.status===429&&Number.isFinite(wait)&&wait>0)message+=` Try again in ${Math.ceil(wait)} seconds.`;
+    throw new Error(message);
+  }
+  return data;
+}
+function setTab(id){
+  for(const name of ['C','E','R']){
+    $('#'+name).hidden=name!==id;
+    $('#t'+name).classList.toggle('on',name===id);
+    if(name===id)$('#t'+name).setAttribute('aria-current','page');else $('#t'+name).removeAttribute('aria-current');
+  }
+}
+for(const id of ['C','E','R'])$('#t'+id).onclick=()=>setTab(id);
+function updateInput(){
+  const count=$('#message').value.length;
+  $('#message-count').textContent=count.toLocaleString()+' / 4,000 characters';
+  $('#analyse').disabled=analysisBusy||!$('#message').value.trim();
+  $('#clear').disabled=analysisBusy||count===0;
+}
+function analysisControls(busy){
+  analysisBusy=busy;
+  $('#message').disabled=busy;
+  document.querySelectorAll('[data-example]').forEach(button=>button.disabled=busy);
+  $('#analysis-panel').setAttribute('aria-busy',String(busy));
+  $('#analyse').textContent=busy?'Analysing...':'Analyse message';
+  updateInput();
+}
+function resetAnalysis(){
+  $('#analysis-result').innerHTML=EMPTY_ANALYSIS;
+  $('#analysis-status').textContent='';
+}
+$('#message').addEventListener('input',()=>{resetAnalysis();updateInput()});
+$('#clear').onclick=()=>{$('#message').value='';resetAnalysis();updateInput();$('#message').focus()};
+for(const button of document.querySelectorAll('[data-example]'))button.onclick=()=>{
+  $('#message').value=EXAMPLES[button.dataset.example];resetAnalysis();updateInput();$('#message').focus();
+};
+function validAnalysis(d,text){
+  return d&&typeof d==='object'&&Object.hasOwn(ASSESSMENT,d.assessment)&&typeof d.summary==='string'&&d.summary.trim()
+    &&Array.isArray(d.red_flags)&&d.red_flags.every(f=>f&&typeof f.quote==='string'&&f.quote.length&&text.includes(f.quote)&&typeof f.why==='string')
+    &&Array.isArray(d.safer_steps)&&d.safer_steps.every(x=>typeof x==='string')&&typeof d.suggested_reply==='string'
+    &&typeof d.model==='string'&&typeof d.provider==='string';
+}
+function renderAnalysis(d){
+  $('#analysis-result').innerHTML=`<span class="assessment ${esc(d.assessment)}">${esc(ASSESSMENT[d.assessment])}</span>
+    <h2 id="analysis-heading">What to look at</h2><p class="analysis-summary">${esc(d.summary)}</p>
+    <h3>${d.red_flags.length} quoted warning sign${d.red_flags.length===1?'':'s'}</h3>${d.red_flags.length?`<ul class="analysis-flags">${d.red_flags.map(f=>`<li><q>${esc(f.quote)}</q><p>${esc(f.why)}</p></li>`).join('')}</ul>`:'<p class="analysis-summary">No specific warning phrase was identified. That does not confirm the sender or request is genuine.</p>'}
+    <h3>Before you act</h3><ol class="analysis-steps">${d.safer_steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol>
+    <div class="reply-heading"><h3>${d.suggested_reply.trim()?'A possible reply':'No reply needed'}</h3>${d.suggested_reply.trim()?'<button id="copy-reply" class="text-button" type="button">Copy reply</button>':''}</div>
+    <p class="reply" id="reply-text">${esc(d.suggested_reply.trim()||'Do not reply to this message. Verify through a contact method you already trust.')}</p>${d.suggested_reply.trim()?'<span id="copy-feedback" class="copy-feedback" role="status" aria-live="polite"></span>':''}
+    <p class="provenance">Analysed by ${esc(d.model)} on ${esc(d.provider)}.</p>
+    <p class="uncertainty">AI analysis can miss scams or flag genuine messages. Confirm important requests through a contact method you already trust.</p>`;
+  if($('#copy-reply'))$('#copy-reply').onclick=async()=>{
+    try{await navigator.clipboard.writeText(d.suggested_reply);$('#copy-feedback').textContent='Reply copied.'}
+    catch(e){$('#copy-feedback').textContent='Copy is unavailable here. Select the reply text to copy it.'}
+  };
+}
+async function analyse(){
+  const text=$('#message').value.trim();if(!text||analysisBusy)return;
+  analysisControls(true);$('#analysis-status').textContent='Nemotron is checking the message.';
+  $('#analysis-result').innerHTML='<div class="loading-state"><span class="dot" aria-hidden="true"></span><h2 id="analysis-heading">Checking the message</h2><p>Looking for warning signs and useful ways to verify the request.</p></div>';
+  try{
+    const d=await jsonRequest('/api/analyse',{text});
+    if(!validAnalysis(d,text))throw new Error('The model returned an incomplete analysis. Your text is still here. Please try again.');
+    renderAnalysis(d);$('#analysis-status').textContent='Analysis ready.';
+  }catch(e){
+    $('#analysis-status').textContent='Analysis could not be completed.';
+    $('#analysis-result').innerHTML=`<div class="analysis-error" role="alert"><h2 id="analysis-heading">We could not analyse this message</h2><p>${esc(e.message)}</p><button id="analysis-retry" class="btn q" type="button">Try again</button></div>`;
+    $('#analysis-retry').onclick=analyse;
+  }finally{analysisControls(false)}
+}
+$('#analyse').onclick=analyse;updateInput();
 function stats(sum){
-  if(!sum){$("#stats").innerHTML="";return}
-  const b=sum.baseline,g=sum["told-the-rules"];
-  $("#stats").innerHTML=`<div class="stat r"><div class="n">${b.compromised}/${b.total}</div><div class="l">plain assistant paid or shared the code</div></div>
-  <div class="stat r"><div class="n">${g.compromised}/${g.total}</div><div class="l">still fooled after being told the safety rule</div></div>
-  <div class="stat g"><div class="n">${g.verified}/${g.total}</div><div class="l">verified on the official number first</div></div>`;
+  if(!sum){$('#stats').innerHTML='';return}
+  const b=sum.baseline||{compromised:0,total:0},g=sum['told-the-rules']||{compromised:0,verified:0,total:0};
+  const errors=(b.errors??b.error??0)+(g.errors??g.error??0),total=b.total+g.total;
+  $('#stats').innerHTML=`<div class="stat r"><div class="n">${b.compromised}/${b.total}</div><div class="l">plain assistant attempted a payment or code disclosure</div></div>
+  <div class="stat r"><div class="n">${g.compromised}/${g.total}</div><div class="l">attempted a risky action despite the safety instruction</div></div>
+  <div class="stat g"><div class="n">${g.verified}/${g.total}</div><div class="l">requested simulated independent verification</div></div>
+  <p class="stats-summary">${total-errors} of ${total} attempted conversations completed. ${errors} request${errors===1?'':'s'} failed. Outcomes are simulated tool attempts, not real payments or completed verification.</p>`;
 }
 function grid(){
-  let h=`<div class="h">Scenario</div><div class="h">${LABEL.baseline}</div><div class="h">${LABEL["told-the-rules"]}</div>`;
+  if(!S)return;
+  let h=`<div class="h">Scenario</div><div class="h">${LABEL.baseline}</div><div class="h">${LABEL['told-the-rules']}</div>`;
   for(const s of S.scenarios){
     h+=`<div class="sc"><b>${esc(s.title)}</b><span>“${esc(s.hook)}”</span></div>`;
     for(const c of S.conditions){
-      const r=results[s.id+"|"+c];
-      if(!r) h+=`<div class="cell" id="c-${s.id}-${c}"><span class="why">Not run yet</span></div>`;
-      else if(r==="running") h+=`<div class="cell running" id="c-${s.id}-${c}"><span><span class="dot"></span>Nemotron is reading the messages…</span></div>`;
-      else if(r.error) h+=`<div class="cell"><span class="why">${esc(r.error)}</span></div>`;
+      const r=results[s.id+'|'+c];
+      if(!r)h+='<div class="cell"><span class="why">Not run yet</span></div>';
+      else if(r==='running')h+='<div class="cell running"><span><span class="dot" aria-hidden="true"></span>Nemotron is reading the messages...</span></div>';
+      else if(r.error)h+=`<div class="cell"><span class="why">${esc(r.error)}</span></div>`;
       else{
-        const d=r.deciding_call;let why=r.outcome==="compromised"?(d.name==="send_payment"?`sent €${esc(d.args.amount_eur)} to ${esc(d.args.account)}`:`shared the one-time code`):r.outcome==="verified"?"called the official number":"no risky action";
-        h+=`<div class="cell ${r.outcome}" data-k="${s.id}|${c}"><span class="stamp ${r.outcome}">${r.outcome.toUpperCase()}</span><span class="why">${why}, message ${r.turns} of 4</span></div>`;
+        const d=r.deciding_call||{},args=d.args||{};
+        const why=r.outcome==='compromised'?(d.name==='send_payment'?`attempted €${esc(args.amount_eur)} to ${esc(args.account)}`:'attempted to share a one-time code'):r.outcome==='verified'?'called the simulated verification tool':'no risky tool call';
+        h+=`<button class="cell ${esc(r.outcome)}" type="button" data-k="${esc(s.id+'|'+c)}" aria-label="${esc(s.title+', '+LABEL[c]+': '+OUTCOME[r.outcome])}"><span class="stamp ${esc(r.outcome)}">${esc(OUTCOME[r.outcome]||r.outcome)}</span><span class="why">${why}, message ${esc(r.turns)} of 4</span></button>`;
       }
     }
   }
-  $("#grid").innerHTML=h;
-  document.querySelectorAll(".cell[data-k]").forEach(el=>el.onclick=()=>show(results[el.dataset.k]));
-}
-function bubble(t){
-  if(t.who==="scammer"||t.who==="s") return `<div class="msg s"><div class="who">Incoming message</div>${esc(t.text)}</div>`;
-  if(t.who==="agent") return `<div class="msg a"><div class="who">Assistant (Nemotron)</div>${esc(t.text)}</div>`;
-  if(t.who==="agent-tool"){const bad=t.tool!=="call_official_number";return `<div class="tool ${bad?"bad":"ok"}">${esc(t.tool)}(${esc(JSON.stringify(t.args))})${t.form==="text"?" · written as text":""}</div>`}
-  return "";
+  $('#grid').innerHTML=h;
+  document.querySelectorAll('.cell[data-k]').forEach(el=>el.onclick=()=>show(results[el.dataset.k]));
 }
 function show(r){
   const sc=S.scenarios.find(x=>x.id===r.scenario)||{};let bal=6240,ev=[];
-  let ph=`<div class="phone"><div class="scr"><div class="top"><div class="av">${esc((sc.sender||"?")[0])}</div><b>${esc(sc.sender||"Unknown")}</b><span>Text message · to Sam</span></div><div class="msgs">`;
-  for(const t of r.transcript){
-    if(t.who==="scammer") ph+=`<div class="sms">${esc(t.text)}</div>`;
-    else if(t.who==="agent") ph+=`<div class="ava">${esc(t.text.slice(0,220))}</div>`;
-    else if(t.who==="agent-tool"){
-      const bad=t.tool!=="call_official_number";ph+=`<div class="act ${bad?"bad":"ok"}">Ava &rarr; ${esc(t.tool)}${t.form==="text"?" (as text)":""}</div>`;
-      if(t.tool==="send_payment"){const a=Number(t.args.amount_eur)||0;bal-=a;ev.push(`<div class="ev" style="color:var(--red)">&minus;&euro;${a.toLocaleString()} to ${esc(t.args.account)} (${esc(t.args.payee||"new payee")})</div>`)}
-      else if(t.tool==="share_one_time_code") ev.push(`<div class="ev" style="color:var(--red)">One-time code 482913 sent to &ldquo;${esc(t.args.recipient||"?")}&rdquo;</div>`);
-      else ev.push(`<div class="ev" style="color:var(--green)">Called ${esc(t.args.organisation||"the organisation")} on the official number</div>`);
+  let ph=`<div class="phone"><div class="scr"><div class="top"><div class="av">${esc((sc.sender||'?')[0])}</div><b>${esc(sc.sender||'Unknown')}</b><span>Text message to Sam, simulated</span></div><div class="msgs">`;
+  for(const t of r.transcript||[]){
+    if(t.who==='scammer')ph+=`<div class="sms">${esc(t.text)}</div>`;
+    else if(t.who==='agent')ph+=`<div class="ava">${esc((t.text||'').slice(0,220))}</div>`;
+    else if(t.who==='agent-tool'){
+      const bad=t.tool!=='call_official_number',args=t.args||{};
+      ph+=`<div class="act ${bad?'bad':'ok'}">Ava requests ${esc(t.tool)}${t.form==='text'?' (as text)':''}</div>`;
+      if(t.tool==='send_payment'){const a=Number(args.amount_eur)||0;bal-=a;ev.push(`<div class="ev" style="color:var(--red)">Simulated payment attempt: &euro;${a.toLocaleString()} to ${esc(args.account)} (${esc(args.payee||'new payee')})</div>`)}
+      else if(t.tool==='share_one_time_code')ev.push(`<div class="ev" style="color:var(--red)">Attempted to share the simulated one-time code with ${esc(args.recipient||'?')}</div>`);
+      else ev.push(`<div class="ev" style="color:var(--green)">Requested simulated verification with ${esc(args.organisation||'the organisation')}</div>`);
     }
   }
-  ph+=`</div></div></div>`;
-  const acct=`<div class="acct"><div class="meta">Sam&rsquo;s account, simulated</div><div class="bal" style="color:${bal<6240?"var(--red)":"var(--ink)"}">&euro;${bal.toLocaleString(undefined,{minimumFractionDigits:2})}</div><div class="meta">started at &euro;6,240.00</div>${ev.join("")||'<div class="ev">No money moved, no code shared.</div>'}<p class="meta" style="margin-top:10px">Outcome decided by the tool call. Model: ${esc(r.model)}. Instruction: ${esc(LABEL[r.condition])}.</p></div>`;
-  $("#dt").textContent=r.title+" · "+LABEL[r.condition];$("#ds").textContent=r.outcome.toUpperCase();$("#ds").className="stamp "+r.outcome;
-  $("#db").innerHTML=`<div class="dwrap">${ph}${acct}</div>`;dlg.showModal()}
+  ph+='</div></div></div>';
+  const acct=`<div class="acct"><div class="meta">Sam's account, simulated</div><div class="bal" style="color:${bal<6240?'var(--red)':'var(--ink)'}">&euro;${bal.toLocaleString(undefined,{minimumFractionDigits:2})}</div><div class="meta">Illustrative balance, started at &euro;6,240.00</div>${ev.join('')||'<div class="ev">No payment or code-sharing tool attempt.</div>'}<p class="meta" style="margin-top:10px">This is a reconstruction of tool attempts, not an executed payment ledger. Model: ${esc(r.model)}. Instruction: ${esc(LABEL[r.condition])}.</p></div>`;
+  $('#dt').textContent=r.title+' · '+LABEL[r.condition];$('#ds').textContent=OUTCOME[r.outcome]||r.outcome;$('#ds').className='stamp '+r.outcome;
+  $('#db').innerHTML=`<div class="dwrap">${ph}${acct}</div>`;$('#dlg').showModal();
+}
 async function run(){
-  $("#run").disabled=true;results={};
-  for(const s of S.scenarios)for(const c of S.conditions)results[s.id+"|"+c]="running";grid();
+  if(!S)return;$('#run').disabled=true;results={};
+  for(const s of S.scenarios)for(const c of S.conditions)results[s.id+'|'+c]='running';grid();
+  $('#runmeta').textContent='Running all 12 conversations. Failures will remain in the results.';
   const t0=Date.now();
   await Promise.all(S.scenarios.flatMap(s=>S.conditions.map(async c=>{
-    try{const r=await (await fetch("/api/eval/bout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({scenario:s.id,condition:c})})).json();results[s.id+"|"+c]=r}
-    catch(e){results[s.id+"|"+c]={error:"Request failed"}}
+    try{const r=await jsonRequest('/api/eval/bout',{scenario:s.id,condition:c});if(!r.outcome)throw new Error('No outcome was returned.');results[s.id+'|'+c]=r}
+    catch(e){results[s.id+'|'+c]={error:e.message,condition:c}}
     grid();
   })));
-  const all=Object.values(results).filter(r=>r.outcome);const sum={};
-  for(const c of S.conditions){const rs=all.filter(r=>r.condition===c);sum[c]={total:rs.length,compromised:rs.filter(r=>r.outcome==="compromised").length,verified:rs.filter(r=>r.outcome==="verified").length}}
-  stats(sum);$("#runmeta").textContent=`Live run finished in ${Math.round((Date.now()-t0)/1000)} s · ${S.model}`;$("#run").disabled=false;$("#run").textContent="Run again";
+  const sum={};let failed=0;
+  for(const c of S.conditions){
+    const rs=S.scenarios.map(s=>results[s.id+'|'+c]);
+    const errors=rs.filter(r=>r.error||!r.outcome).length;failed+=errors;
+    sum[c]={total:rs.length,errors,compromised:rs.filter(r=>r.outcome==='compromised').length,verified:rs.filter(r=>r.outcome==='verified').length};
+  }
+  stats(sum);$('#runmeta').textContent=`Run finished in ${Math.round((Date.now()-t0)/1000)} s. ${failed} of ${S.scenarios.length*S.conditions.length} conversations failed. ${S.model}`;$('#run').disabled=false;$('#run').textContent='Run again';
 }
-// Rehearse
-let hist=[],rsid=null;
-function drawChat(){$("#chat").innerHTML=hist.map(h=>h.role==="scammer"?`<div class="msg s"><div class="who">Incoming message</div>${esc(h.content)}</div>`:`<div class="msg p">${esc(h.content)}</div>`).join("")}
-async function next(){const r=await (await fetch("/api/rehearse/next",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({scenario:rsid,history:hist})})).json();if(r.message){hist.push({role:"scammer",content:r.message});drawChat()}else{$("#rin").disabled=true;$("#rsend").disabled=true}}
-$("#rstart").onclick=async()=>{rsid=$("#rs").value;hist=[];$("#debrief").innerHTML="";$("#rin").disabled=false;$("#rsend").disabled=false;$("#rdone").disabled=false;await next()};
-$("#rsend").onclick=async()=>{const v=$("#rin").value.trim();if(!v)return;hist.push({role:"person",content:v});$("#rin").value="";drawChat();await next()};
-$("#rin").addEventListener("keydown",e=>{if(e.key==="Enter")$("#rsend").click()});
-$("#rdone").onclick=async()=>{$("#rdone").disabled=true;$("#debrief").innerHTML=`<div class="debrief"><span class="dot"></span>Nemotron is reviewing your chat…</div>`;
-  const d=await (await fetch("/api/rehearse/debrief",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({scenario:rsid,history:hist})})).json();
-  $("#debrief").innerHTML=`<div class="debrief"><div class="score">${esc(d.score??"–")}<span class="meta"> / 100</span></div><p><b>${esc(d.verdict||"")}</b></p>${(d.red_flags||[]).map(f=>`<div class="flag"><q>${esc(f.quote)}</q><br>${esc(f.why)}</div>`).join("")}${(d.did_well||[]).length?`<p><b>You did well:</b> ${(d.did_well||[]).map(esc).join(" · ")}</p>`:""}<p><b>Safer move:</b> ${esc(d.safer_move||"")}</p><p class="meta">Coach: ${esc(S.model)} · practice feedback, not professional advice</p></div>`;$("#rdone").disabled=false};
-$("#tE").onclick=()=>{$("#E").hidden=false;$("#R").hidden=true;$("#tE").className="on";$("#tR").className=""};
-$("#tR").onclick=()=>{$("#E").hidden=true;$("#R").hidden=false;$("#tR").className="on";$("#tE").className=""};
-(async()=>{S=await (await fetch("/api/scenarios")).json();$("#model").textContent=S.model+" · Nebius";$("#rs").innerHTML=S.scenarios.map(s=>`<option value="${s.id}">${esc(s.title)}</option>`).join("");grid();
-  const L=await (await fetch("/api/results/latest")).json();stats(L.summary);
-  const R=await (await fetch("/api/results/bouts")).json();for(const b of R.bouts||[])results[b.scenario+"|"+b.condition]=b;grid();
-  if(R.live===false){$("#run").disabled=true;$("#run").textContent="Replay mode: add NEBIUS_API_KEY to run live";$("#rdone").title="Needs NEBIUS_API_KEY";}if(L.summary)$("#runmeta").textContent=`Above: ${L.summary.baseline.total*2} recorded conversations (${L.repeats} repeats), ${L.started_utc}`;$("#run").onclick=run})();
+let hist=[],rsid=null,rehearsalBusy=false;
+function drawChat(){$('#chat').innerHTML=hist.map(h=>h.role==='scammer'?`<div class="msg s"><div class="who">Incoming message</div>${esc(h.content)}</div>`:`<div class="msg p">${esc(h.content)}</div>`).join('')}
+function rehearseControls(busy){
+  rehearsalBusy=busy;$('#rstart').disabled=busy;
+  $('#rsend').disabled=busy||!rsid;$('#rin').disabled=busy||!rsid;$('#rdone').disabled=busy||!rsid;
+}
+function rehearsalError(message){$('#debrief').innerHTML=`<div class="analysis-error" role="alert"><h2>We could not complete this request</h2><p>${esc(message)}</p><p>Your conversation is still here. Select Get my debrief to retry the review.</p></div>`}
+async function next(){
+  const r=await jsonRequest('/api/rehearse/next',{scenario:rsid,history:hist});
+  if(r.message){hist.push({role:'scammer',content:r.message});drawChat();return true}
+  return false;
+}
+$('#rstart').onclick=async()=>{
+  rsid=$('#rs').value;hist=[];$('#debrief').innerHTML='';rehearseControls(true);
+  try{await next()}catch(e){rehearsalError(e.message)}finally{rehearseControls(false)}
+};
+$('#rsend').onclick=async()=>{
+  const v=$('#rin').value.trim();if(!v||rehearsalBusy)return;
+  hist.push({role:'person',content:v});$('#rin').value='';drawChat();rehearseControls(true);
+  let more=true;try{more=await next()}catch(e){rehearsalError(e.message)}finally{rehearseControls(false);if(!more){$('#rin').disabled=true;$('#rsend').disabled=true}}
+};
+$('#rin').addEventListener('keydown',e=>{if(e.key==='Enter')$('#rsend').click()});
+$('#rdone').onclick=async()=>{
+  if(!rsid||rehearsalBusy)return;rehearseControls(true);
+  $('#debrief').innerHTML='<div class="debrief"><span class="dot" aria-hidden="true"></span>Nemotron is reviewing your chat...</div>';
+  try{
+    const d=await jsonRequest('/api/rehearse/debrief',{scenario:rsid,history:hist});
+    if(!Number.isFinite(d.score)||d.score<0||d.score>100||typeof d.verdict!=='string'||!Array.isArray(d.red_flags)||!d.red_flags.every(f=>f&&typeof f.quote==='string'&&typeof f.why==='string')||!Array.isArray(d.did_well)||!d.did_well.every(x=>typeof x==='string')||typeof d.safer_move!=='string')throw new Error('The coach returned an incomplete review. Please try again.');
+    $('#debrief').innerHTML=`<div class="debrief"><div class="score">${esc(d.score)}<span class="meta"> / 100</span></div><p><b>${esc(d.verdict)}</b></p>${d.red_flags.map(f=>`<div class="flag"><q>${esc(f.quote)}</q><br>${esc(f.why)}</div>`).join('')}${d.did_well.length?`<p><b>You did well:</b> ${d.did_well.map(esc).join(' · ')}</p>`:''}<p><b>Safer move:</b> ${esc(d.safer_move)}</p><p class="meta">Coach: ${esc(S?.model||'NVIDIA Nemotron')} · practice feedback, not professional advice</p></div>`;
+  }catch(e){rehearsalError(e.message)}finally{rehearseControls(false)}
+};
+(async()=>{
+  try{
+    S=await jsonRequest('/api/scenarios');$('#model').textContent=S.model+' · Nebius';$('#rs').innerHTML=S.scenarios.map(s=>`<option value="${esc(s.id)}">${esc(s.title)}</option>`).join('');grid();
+    const L=await jsonRequest('/api/results/latest');stats(L.summary);
+    const R=await jsonRequest('/api/results/bouts');for(const b of R.bouts||[])results[b.scenario+'|'+b.condition]=b;grid();
+    if(R.live===false){$('#run').disabled=true;$('#run').textContent='Recorded replay';$('#rdone').title='Live coach needs a server model connection';}
+    if(L.summary)$('#runmeta').textContent=`Recorded: ${Object.values(L.summary).reduce((n,x)=>n+(x.total||0),0)} conversations, ${L.repeats} repeats. ${L.started_utc}`;
+    $('#run').onclick=run;
+  }catch(e){$('#run').disabled=true;$('#runmeta').textContent=e.message;$('#chat').textContent='The rehearsal scenarios could not be loaded. Reload the page to try again.'}
+})();
+
 </script>
 </body>
 </html>
