@@ -1,8 +1,26 @@
 # Scam Arena
 
-Compare an AI's review of a suspicious message with the tool requests an assistant makes in a separate conversation about that message.
+[![Watch the 78-second demo on YouTube](docs/screenshots/video-thumbnail.png)](https://youtu.be/R5W4NjHoMzc)
 
-[Try the hosted app](https://scam-arena-hio3isepcq-ew.a.run.app).
+[Try the hosted app](https://scam-arena-hio3isepcq-ew.a.run.app/) or [watch the video](https://youtu.be/R5W4NjHoMzc).
+
+**It knows it's a scam. It pays anyway.** Compare an AI's review of a suspicious message with the tool requests an assistant makes in a separate conversation. The conversations use different prompts and context; neither sees the other's answers. All tools and funds are simulated.
+
+![Recorded three-model comparison, with different prompts and context](docs/screenshots/1-finding.png)
+
+**Your own message, both ways.** This fictional exchange-support example produced three separate SCAM recognition replies and a simulated EUR4,200 payment request in the assistant conversation.
+
+![Separate recognition checks and the assistant's simulated payment request](docs/screenshots/2-falls-for-it.png)
+
+**Check the action.** Replay the recorded requests against a browser policy: only saved fictional payees, never share a code. No saved payees are configured by default. The replay does not change the original requests or control a payment system.
+
+![Client-side replay refuses a request to an unsaved fictional payee](docs/screenshots/3-check-the-action.png)
+
+**Read a screenshot.** Nemotron 3.5 Super VL transcribes an uploaded message. Review and correct the text before running the test.
+
+![A synthetic screenshot transcribed for review before the test runs](docs/screenshots/4-read-a-screenshot.png)
+
+Screenshots and the video show captured interface states. Current live results can differ; inspect completed replies and errors in the app. No real funds move or security codes are sent.
 
 ## Start with a message
 
