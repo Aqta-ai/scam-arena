@@ -444,15 +444,25 @@ class MergedHttpTests(unittest.TestCase):
 
     def test_all_live_routes_share_one_admission_window(self):
         sid = next(iter(app.BY_ID))
+        released = threading.Event()
+        original_release = app.LIVE_LIMITS.release
+
+        def observe_release():
+            original_release()
+            released.set()
+
         with patch.object(arena, "analyse", return_value=REVIEW), \
                 patch.object(custom, "both", return_value={"analysis": REVIEW, "bout": {"outcome": "resisted"}}), \
                 patch.object(vision, "read", return_value={"text": TEXT}), \
                 patch.object(arena, "run_bout", return_value={"outcome": "resisted"}), \
-                patch.object(arena, "debrief") as coach:
+                patch.object(arena, "debrief") as coach, \
+                patch.object(app.LIVE_LIMITS, "release", side_effect=observe_release):
             for path, body in (("/api/analyse", {"text": TEXT}), ("/api/custom", {"text": TEXT}),
                                ("/api/read-image", {"image": image_url()}),
                                ("/api/eval/bout", {"scenario": sid, "condition": "baseline"})):
+                released.clear()
                 self.assertEqual(self.request(path, body)[0], 200)
+                self.assertTrue(released.wait(3), "The server handler must release its slot")
             status, headers, error = self.request("/api/rehearse/debrief", {"scenario": sid, "history": []})
             self.assertEqual(status, 429)
             self.assertGreaterEqual(int(headers["Retry-After"]), 1)
@@ -490,9 +500,19 @@ class MergedHttpTests(unittest.TestCase):
                  (arena, "run_bout", "/api/eval/bout", {"scenario": sid, "condition": "baseline"}),
                  (arena, "debrief", "/api/rehearse/debrief", {"scenario": sid, "history": []})]
         for module, name, path, body in cases:
-            with self.subTest(path=path), patch.object(app, "LIVE_LIMITS", app.LiveLimits()), \
-                    patch.object(module, name, side_effect=RuntimeError("Private fixture details")):
+            released = threading.Event()
+            limits = app.LiveLimits()
+            original_release = limits.release
+
+            def observe_release():
+                original_release()
+                released.set()
+
+            with self.subTest(path=path), patch.object(app, "LIVE_LIMITS", limits), \
+                    patch.object(module, name, side_effect=RuntimeError("Private fixture details")), \
+                    patch.object(limits, "release", side_effect=observe_release):
                 status, _, result = self.request(path, body)
+                self.assertTrue(released.wait(3), "The server handler must release its slot")
                 self.assertEqual(status, 502)
                 self.assertNotIn("Private fixture", json.dumps(result))
                 self.assertEqual(app.LIVE_LIMITS.active, 0)

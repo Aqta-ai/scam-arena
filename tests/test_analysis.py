@@ -356,11 +356,20 @@ class AnalysisHttpTests(unittest.TestCase):
     def test_invalid_model_response_is_502_and_releases_slot(self):
         for choice in (completion({"content": "not JSON"}),
                        completion({"content": json.dumps(review())}, "length")):
-            with self.subTest(choice=choice), patch.object(arena, "chat", return_value=choice):
+            released = threading.Event()
+            original_release = app.LIVE_LIMITS.release
+
+            def observe_release():
+                original_release()
+                released.set()
+
+            with self.subTest(choice=choice), patch.object(arena, "chat", return_value=choice), \
+                    patch.object(app.LIVE_LIMITS, "release", side_effect=observe_release):
                 status, _, body = self.request({"text": SOURCE})
-            self.assertEqual(status, 502)
-            self.assertIn("evidence-grounded", body["error"])
-            self.assertEqual(app.LIVE_LIMITS.active, 0)
+                self.assertTrue(released.wait(3), "The server handler must release its slot")
+                self.assertEqual(status, 502)
+                self.assertIn("evidence-grounded", body["error"])
+                self.assertEqual(app.LIVE_LIMITS.active, 0)
 
     def test_four_starts_per_ip_and_forwarded_headers_do_not_bypass(self):
         with patch.object(arena, "chat", return_value=completion({"content": json.dumps(review())})) as model:
@@ -372,9 +381,19 @@ class AnalysisHttpTests(unittest.TestCase):
     def test_two_concurrent_analyses_and_busy_response(self):
         entered = threading.Event()
         release = threading.Event()
+        released = threading.Event()
         lock = threading.Lock()
         count = [0]
+        release_count = [0]
         outcomes = []
+        original_release = app.LIVE_LIMITS.release
+
+        def observe_release():
+            original_release()
+            with lock:
+                release_count[0] += 1
+                if release_count[0] == 2:
+                    released.set()
 
         def slow_model(*args, **kwargs):
             with lock:
@@ -387,7 +406,8 @@ class AnalysisHttpTests(unittest.TestCase):
         def run_request():
             outcomes.append(self.request({"text": SOURCE})[0])
 
-        with patch.object(arena, "chat", side_effect=slow_model):
+        with patch.object(arena, "chat", side_effect=slow_model), \
+                patch.object(app.LIVE_LIMITS, "release", side_effect=observe_release):
             workers = [threading.Thread(target=run_request) for _ in range(2)]
             for worker in workers:
                 worker.start()
@@ -400,7 +420,9 @@ class AnalysisHttpTests(unittest.TestCase):
                 release.set()
                 for worker in workers:
                     worker.join(5)
+            self.assertTrue(released.wait(3), "Both server handlers must release their slots")
         self.assertEqual(sorted(outcomes), [200, 200])
+        self.assertTrue(all(not worker.is_alive() for worker in workers))
         self.assertEqual(app.LIVE_LIMITS.active, 0)
 
     def test_existing_rehearsal_and_evaluation_routes_are_preserved(self):
