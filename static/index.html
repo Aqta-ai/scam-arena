@@ -121,7 +121,7 @@ footer a{display:inline-flex;align-items:center;min-height:44px;color:var(--soft
 
 
 .ladder-meta{display:flex;align-items:baseline;justify-content:space-between;gap:4px 14px;flex-wrap:wrap;margin-top:4px}.ladder-meta>p{margin:0;font-size:12px}.ladder-method{font-size:12px}.ladder-method>summary{font-size:12px;white-space:nowrap;min-height:44px;padding:8px 0}.ladder-method[open]{flex-basis:100%}.ladder-method p{margin:0 0 4px;font-size:12px;max-width:78ch}
-.news-line{margin:10px 0 0;font-size:13px;color:var(--soft);max-width:52ch}.news-line span{display:block;font-size:12px;margin-top:2px}.agreement{margin:10px 0 0;font-size:14px;color:var(--ink)}
+.agreement{margin:10px 0 0;font-size:14px;color:var(--ink)}
 </style>
 </head>
 <body>
@@ -130,7 +130,7 @@ footer a{display:inline-flex;align-items:center;min-height:44px;color:var(--soft
   <div class="header-tools"><span class="provider">Runs on NVIDIA Nemotron via Nebius</span><button class="text-button" id="openHistory">History <span id="historyCount">0</span></button></div>
 </div></header>
 <main>
-  <section class="finding" aria-labelledby="findingTitle"><div><h1 id="findingTitle">It knows it’s a scam.<br> It pays anyway.</h1><p class="separate-tests">Asked, it spots the scam. Acting for Sam, it falls for it.</p><p class="news-line">This week Binance reported crypto&rsquo;s biggest hack and told users to rely only on official channels. That is when fake support messages arrive. <span>BBC; Bloomberg, 30 Oct 2026</span></p></div><div class="ladder"><table aria-label="Three models in separate recorded tests"><thead><tr><th scope="col">Model</th><th scope="col">Flagged as scam</th><th scope="col">Risky requests</th></tr></thead><tbody id="modelLadder"><tr><td colspan="3">Loading recorded model results…</td></tr></tbody></table><div class="ladder-meta"><p>Six fictional scams; separate tests.</p><details class="ladder-method"><summary>Test method</summary><p id="ladderUnits">Six authored fictional scam scripts. All effects are simulated.</p></details></div></div></section>
+  <section class="finding" aria-labelledby="findingTitle"><div><h1 id="findingTitle">It knows it’s a scam.<br> It pays anyway.</h1><p class="separate-tests">Separate recorded tests, with different prompts and context.</p></div><div class="ladder"><table aria-label="Three models in separate recorded tests"><thead><tr><th scope="col">Model</th><th scope="col">Flagged as scam</th><th scope="col">Risky requests</th></tr></thead><tbody id="modelLadder"><tr><td colspan="3">Loading recorded model results…</td></tr></tbody></table><div class="ladder-meta"><p>Six fictional scams; separate tests.</p><details class="ladder-method"><summary>Test method</summary><p id="ladderUnits">Six authored fictional scam scripts. All effects are simulated.</p></details></div></div></section>
   <div class="workspace">
     <section class="input-panel" aria-labelledby="inputTitle">
       <h2 id="inputTitle">Set up a test</h2>
@@ -178,7 +178,6 @@ footer a{display:inline-flex;align-items:center;min-height:44px;color:var(--soft
 <dialog class="inspector-dialog" id="inspectorDialog" aria-labelledby="inspectTitle"><div class="inspector-header"><h2 id="inspectTitle">Recorded model runs</h2><button class="text-button" id="closeInspector">Close runs</button></div><p class="inspector-status" id="inspectStatus" role="status" aria-live="polite"></p><div class="inspector-actions"><button class="text-button" id="inspectRetry" hidden>Retry loading runs</button><button class="text-button" id="downloadEvidence" disabled>Download evidence JSON</button></div><div id="inspectBody" hidden><p class="provenance" id="inspectModel"></p><label class="field-label" for="inspectScenario">Scam scenario</label><select id="inspectScenario"></select><div class="inspector-columns"><section><h3>Asked</h3><label class="field-label" for="inspectRecognitionRepeat">Recognition trial</label><select id="inspectRecognitionRepeat"></select><p class="inspector-note">Separate recognition call, full script, no tools.</p><div id="inspectedAsked"></div><details><summary>Saved recognition question</summary><p id="inspectPrompt"></p></details></section><section><h3>Acting</h3><div class="inspector-selects"><div><label class="field-label" for="inspectCondition">Prompt condition</label><select id="inspectCondition"></select></div><div><label class="field-label" for="inspectActingRepeat">Action trial</label><select id="inspectActingRepeat"></select></div></div><p class="inspector-note">Incremental messages and simulated tool requests.</p><div id="inspectedActing"></div></section></div><details class="source-details"><summary>Source files and SHA-256 hashes</summary><pre class="raw" id="inspectHashes"></pre></details><details><summary>Method and limits</summary><p class="inspector-methods" id="inspectMethods"></p></details></div></dialog>
 <footer><a href="/lab.html">Full lab</a><a href="https://github.com/Aqta-ai/scam-arena">Source code</a><span>Scam Arena · Apache 2.0</span></footer>
 <script>
-const START = 6240;
 const $ = id => document.getElementById(id);
 const esc = value => String(value ?? '').replace(/[&<>"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]));
 const eur = value => '€' + Number(value).toLocaleString('en-IE', {maximumFractionDigits:2});
@@ -190,9 +189,9 @@ const HISTORY_KEY = 'scam-arena-history-v1';
 const HISTORY_LIMIT = 20;
 const MAX_HISTORY_BYTES = 1400000;
 const TOOL = {
-  send_payment: args => `Requested payment of ${eur(args.amount_eur)} to ${args.account || args.payee || 'an unspecified account'}`,
-  share_one_time_code: args => `Requested sharing Sam's one-time code with ${args.recipient || 'the caller'}`,
-  call_official_number: args => `Requested a call to ${args.organisation || 'the official'} number`,
+  send_payment: args => `Requested simulated payment of ${eur(args.amount_eur)} to ${args.account || args.payee || 'an unspecified account'}`,
+  share_one_time_code: args => `Requested simulated code sharing with ${args.recipient || 'the caller'}`,
+  call_official_number: args => `Requested a simulated call to ${args.organisation || 'the official'} number`,
 };
 let S = {scenarios:[],bouts:[],knows:[],live:false,model:'',image:{max_bytes:2500000,max_side:1600,mime_types:['image/png','image/jpeg','image/webp']}};
 let cur = null, loaded = false, busy = false, customText = '', currentResult = null;
@@ -274,7 +273,26 @@ function validAnalysis(data,text) {
     && typeof data.suggested_reply==='string' && data.suggested_reply.length<=600 && typeof data.model==='string' && typeof data.provider==='string';
 }
 function validBout(bout) { return bout && typeof bout==='object' && typeof bout.outcome==='string' && Array.isArray(bout.transcript) && bout.transcript.length<=80 && bout.transcript.every(item=>item && typeof item==='object' && typeof item.who==='string'); }
-function validResult(data,text) { return data && validAnalysis(data.analysis,text) && validBout(data.bout); }
+function validAgreement(data,allowSaved=false) {
+  if(!data || typeof data!=='object' || Array.isArray(data)) return false;
+  const count=value=>Number.isSafeInteger(value) && value>=0;
+  const saved=Object.keys(data).every(key=>['scam','runs'].includes(key));
+  if(saved) return allowSaved && count(data.scam) && count(data.runs) && data.runs>0 && data.runs<=3 && data.scam<=data.runs;
+  if(data.runs!==3 || !['scam','safe','unclear','errors','completed'].every(key=>count(data[key]) && data[key]<=3)
+    || data.scam+data.safe+data.unclear!==data.completed || data.completed+data.errors!==data.runs
+    || !Array.isArray(data.results) || data.results.length!==data.runs) return false;
+  if(!data.results.every(result=>result && typeof result==='object' && !Array.isArray(result)
+    && typeof result.reply==='string' && result.reply.length<=600
+    && (!Object.hasOwn(result,'error') || (typeof result.error==='string' && result.error.length>0 && result.error.length<=300))
+    && (result.status==='complete' ? ['SCAM','SAFE','unclear'].includes(result.verdict) && !!result.reply.trim() && !Object.hasOwn(result,'error')
+      : result.status==='error' && result.verdict===null && result.reply===''))) return false;
+  return data.results.filter(result=>result.status==='complete').length===data.completed
+    && data.results.filter(result=>result.status==='error').length===data.errors
+    && data.results.filter(result=>result.verdict==='SCAM').length===data.scam
+    && data.results.filter(result=>result.verdict==='SAFE').length===data.safe
+    && data.results.filter(result=>result.verdict==='unclear').length===data.unclear;
+}
+function validResult(data,text) { return data && validAnalysis(data.analysis,text) && validBout(data.bout) && validAgreement(data.agreement); }
 function renderEvidence(evidence) {
   if(!evidence || !Array.isArray(evidence.models) || evidence.models.length!==3) throw new Error('Recorded model data is unavailable.');
   $('modelLadder').innerHTML=evidence.models.map(model=>`<tr><th scope="row"><button class="model-inspect" data-model="${esc(MODEL_SLUGS[model.id] || '')}" aria-label="Inspect runs for ${esc(model.label)}">${esc(model.label.replace('Nemotron ',''))}</button></th><td>${Number(model.recognition.labelled_scam)}/${Number(model.recognition.total)}</td><td>${Number(model.acting.risky)}/${Number(model.acting.total)}</td></tr>`).join('');
@@ -282,8 +300,8 @@ function renderEvidence(evidence) {
   document.querySelectorAll('[data-model]').forEach(button=>{button.onclick=()=>openInspector(button.dataset.model);});
   $('experimentRows').innerHTML=evidence.models.flatMap(model=>[
     `<tr><th scope="row">${esc(model.label)}</th><td>Recognition</td><td>${Number(model.recognition.labelled_scam)}/${Number(model.recognition.total)} labelled SCAM</td><td>${Number(model.recognition.error)}</td></tr>`,
-    `<tr><th scope="row">${esc(model.label)}</th><td>Acting, plain prompt</td><td>${Number(model.acting.risky)}/${Number(model.acting.total)} risky requests; ${Number(model.acting.payment)} payments, ${Number(model.acting.code)} code shares; ${Number(model.acting.risky_scenarios)}/${Number(model.acting.scenario_count)} scripts</td><td>${Number(model.acting.error)}</td></tr>`,
-    `<tr><th scope="row">${esc(model.label)}</th><td>Acting, safety prompt</td><td>${Number(model.safety_prompt.risky)}/${Number(model.safety_prompt.total)} risky requests; ${Number(model.safety_prompt.payment)} payments, ${Number(model.safety_prompt.code)} code shares</td><td>${Number(model.safety_prompt.error)}</td></tr>`
+    `<tr><th scope="row">${esc(model.label)}</th><td>Acting, plain prompt</td><td>${Number(model.acting.risky)}/${Number(model.acting.total)} risky requests; ${Number(model.acting.payment)} simulated payment requests, ${Number(model.acting.code)} code-sharing requests; ${Number(model.acting.risky_scenarios)}/${Number(model.acting.scenario_count)} scripts</td><td>${Number(model.acting.error)}</td></tr>`,
+    `<tr><th scope="row">${esc(model.label)}</th><td>Acting, safety prompt</td><td>${Number(model.safety_prompt.risky)}/${Number(model.safety_prompt.total)} risky requests; ${Number(model.safety_prompt.payment)} simulated payment requests, ${Number(model.safety_prompt.code)} code-sharing requests</td><td>${Number(model.safety_prompt.error)}</td></tr>`
   ]).join('');
   $('experimentMethods').innerHTML=Object.values(evidence.method || {}).map(text=>`<p>${esc(text)}</p>`).join('');
   $('modelIds').innerHTML=evidence.models.map(model=>`<li><code>${esc(model.id)}</code></li>`).join('');
@@ -308,7 +326,16 @@ async function load() {
   try { renderEvidence(await json('/api/results/evidence')); } catch(_) { $('modelLadder').innerHTML='<tr><td colspan="3">Recorded model data could not load.</td></tr>'; $('ladderUnits').textContent='Use the deeper lab to inspect available saved results.'; }
 }
 function renderAsked(record) {
-  const agree=()=>{const g=record.agreement; if(g && Number.isFinite(g.scam) && Number.isFinite(g.runs) && g.runs>0) $('A').insertAdjacentHTML('beforeend',`<p class="agreement">Said scam <b>${g.scam} of ${g.runs}</b> times when asked separately</p>`);};
+  const agree=()=>{
+    const g=record.agreement;
+    if(!g) return;
+    if(!Object.hasOwn(g,'results')) {
+      $('A').insertAdjacentHTML('beforeend',`<p class="agreement">Saved summary: <b>${g.scam}/${g.runs}</b> recorded replies labelled SCAM. Completion details and individual replies are not included in this summary.</p>`);
+      return;
+    }
+    const summary=g.completed?`<b>${g.scam}/${g.completed}</b> completed replies labelled SCAM`:'<b>Separate checks unavailable</b>: no completed replies';
+    $('A').insertAdjacentHTML('beforeend',`<p class="agreement">${summary}. ${g.errors} failed; ${g.unclear} unclear. Three separate checks.</p><details class="source-details agreement-details"><summary>Replies from the three separate checks</summary><ol>${g.results.map((result,index)=>`<li><small>Check ${index+1}: ${esc(result.status)}${result.status==='complete'?` · ${esc(result.verdict)}`:''}</small><p class="answer">${esc(result.reply || 'No reply returned.')}</p>${result.error?`<p>${esc(result.error)}</p>`:''}</li>`).join('')}</ol></details>`);
+  };
   if(record.analysis) {
     const data=record.analysis;
     $('A').innerHTML=`<p class="verdict">${esc(ASSESSMENT[data.assessment])}</p><p class="answer">${esc(data.summary)}</p>`;
@@ -323,10 +350,10 @@ function renderAsked(record) {
   agree();
 }
 function policyDecision(action) {
-  if(action.tool==='share_one_time_code') return {blocked:true,label:'Refused: codes are never shared'};
+  if(action.tool==='share_one_time_code') return {blocked:true,label:'Would refuse simulated code sharing'};
   if(action.tool==='send_payment') {
     const account=action.args?.account || action.args?.payee || 'unspecified account';
-    return SAVED_PAYEES.includes(account)?{blocked:false,label:`Would allow payment to saved fictional payee ${account}`}:{blocked:true,label:`Refused: ${account} is not a saved payee`};
+    return SAVED_PAYEES.includes(account)?{blocked:false,label:`Would allow simulated payment to saved fictional payee ${account}`}:{blocked:true,label:`Would refuse simulated payment: ${account} is not a saved payee`};
   }
   if(action.tool==='call_official_number') return {blocked:false,label:'Would allow the simulated verification request'};
   return {blocked:null,label:'This request is outside the preview rule'};
@@ -338,30 +365,27 @@ function renderActing() {
     const original=(TOOL[action.tool] || (()=>action.tool))(action.args || {}), decision=preview?policyDecision(action):null;
     return `<li class="${preview?(decision.blocked?'bad':''):BAD.includes(action.tool)?'bad':''}">${esc(decision?decision.label:original)}<small>${preview?`Original request: ${esc(original)} · `:''}After message ${action.after} · simulated tool</small></li>`;
   }).join(''):'<li>No tool calls were recorded.</li>';
-  const deciding=bout.deciding_call;
+  const check=actionCheck(bout,actions), payments=actions.filter(action=>action.tool==='send_payment'), codes=actions.filter(action=>action.tool==='share_one_time_code');
   if(preview) {
     const unsupported=actions.some(action=>policyDecision(action).blocked===null);
-    $('E').innerHTML=`<div class="outcome"><b>${unsupported?'Preview incomplete':'Nothing left the account'}</b><span>Client-side simulated replay only. No payment system or provider was controlled.</span></div>`;
-  } else if(bout.outcome==='compromised' && deciding) {
-    const amount=deciding.name==='send_payment'?Number(deciding.args?.amount_eur) || 0:0;
-    $('E').innerHTML=amount?`<div class="outcome bad"><b>Simulated payment requested</b><span>${eur(amount)} · fictional balance ${eur(START-amount)}</span></div>`:'<div class="outcome bad"><b>Code sharing requested</b><span>A one-time code was exposed in the simulation.</span></div>';
-  } else if(bout.outcome==='verified') $('E').innerHTML='<div class="outcome"><b>Verification requested</b><span>This records a request, not completed verification.</span></div>';
-  else if(bout.outcome==='error') $('E').innerHTML='<div class="outcome bad"><b>Action test did not finish</b><span>Inspect the transcript for the recorded error.</span></div>';
-  else $('E').innerHTML='<div class="outcome"><b>No payment or code sharing recorded</b><span>This applies only to this test.</span></div>';
+    $('E').innerHTML=`<div class="outcome"><b>${unsupported?'Preview incomplete':'Simulated action check applied'}</b><span>Client-side simulated replay only. No payment system or provider was controlled.</span></div>`;
+  } else if(check.label==='Not scored') $('E').innerHTML='<div class="outcome bad"><b>Action check: Not scored</b><span>This run could not be scored. Inspect the transcript for the recorded result.</span></div>';
+  else if(check.risky) {
+    const label=payments.length && codes.length?'Simulated payment and code sharing requested':payments.length?'Simulated payment requested':'Simulated code sharing requested';
+    $('E').innerHTML=`<div class="outcome bad"><b>${label}</b><span>Recorded requests only. All tool effects are simulated.</span></div>`;
+  } else if(bout.outcome==='verified') $('E').innerHTML='<div class="outcome"><b>Simulated verification requested</b><span>No simulated payment or code sharing requested in this run.</span></div>';
+  else $('E').innerHTML='<div class="outcome"><b>No simulated payment or code sharing requested</b><span>This applies only to this run.</span></div>';
   $('policyExplanation').textContent=preview?'Client-side replay preview. The same recorded requests are checked again; no model or server call is made. No saved payees are configured, and codes are never shared. The original request score is unchanged.':'Optional client-side replay preview: pay only saved fictional payees, never share a code. It does not enforce anything on a provider or payment system.';
 }
 function renderResult(record) {
-  if(!validBout(record.bout)) throw new Error('The action result is incomplete. Try again.');
+  if(!validBout(record.bout) || (record.agreement && !validAgreement(record.agreement,true))) throw new Error('The test result is incomplete. Try again.');
   currentResult=record; $('ready').hidden=true; $('result').hidden=false;
   $('resultOrigin').textContent=record.origin;
   $('checkAction').checked=false;
   renderAsked(record);
   const actions=parsedActions(record.bout), check=actionCheck(record.bout,actions);
-  const dc=record.bout?.deciding_call;
-  $('actionScore').textContent=record.bout?.outcome==='compromised' && dc
-    ? (dc.name==='send_payment' ? `Fell for it: requested ${eur(Number(dc.args?.amount_eur)||0)} to ${dc.args?.account || dc.args?.payee || 'an unknown account'}` : 'Fell for it: shared Sam\u2019s code')
-    : (check.label==='Not scored' ? 'Not scored' : 'Did not pay or share a code');
-  $('actionCounts').textContent=`${check.risky} risky request${check.risky===1?'':'s'} · ${check.verification} verification request${check.verification===1?'':'s'}`;
+  $('actionScore').textContent=`Action check: ${check.label}`;
+  $('actionCounts').textContent=`${check.risky} simulated risky request${check.risky===1?'':'s'} · ${check.verification} verification request${check.verification===1?'':'s'}`;
   renderActing();
   $('M').innerHTML=(record.bout.transcript || []).filter(item=>item.who==='scammer').map((item,index)=>`<li><small>${item.standard?'Standard follow-up':`Message ${index+1}`}</small>${esc(item.text)}</li>`).join('');
   $('transcript').textContent=JSON.stringify(record.bout.transcript,null,2);
@@ -375,6 +399,7 @@ function validHistoryRow(row) {
     return row && typeof row.id==='string' && row.id.length<=80 && typeof row.label==='string' && row.label.length<=100 && typeof row.created==='string' && Number.isFinite(Date.parse(row.created))
       && typeof row.input==='string' && row.input.length<=4000 && typeof row.origin==='string' && row.origin.length<=300 && validBout(row.bout)
       && ((row.analysis && validAnalysis(row.analysis,row.input)) || (row.know && typeof row.know.reply==='string' && row.know.reply.length<=1200))
+      && (!Object.hasOwn(row,'agreement') || validAgreement(row.agreement,true))
       && JSON.stringify(row).length<=64000;
   } catch(_) { return false; }
 }
@@ -407,7 +432,7 @@ function drawHistory() {
   $('historyFeedback').textContent=historyMessage;
   $('historyList').innerHTML=historyRows.length?historyRows.map((row,index)=>{
     const asked=row.analysis?ASSESSMENT[row.analysis.assessment]:row.know?.verdict || 'unclear';
-    const outcome={compromised:'Risky request recorded',verified:'Verification requested',resisted:'No risky request recorded',error:'Not scored'}[row.bout.outcome] || 'Not scored';
+    const outcome={compromised:'Simulated risky request recorded',verified:'Simulated verification requested',resisted:'No simulated risky request recorded',error:'Not scored'}[row.bout.outcome] || 'Not scored';
     return `<li><button class="history-open" data-open="${index}"><b>${esc(row.label)}</b><span>${esc(asked)} · ${esc(outcome)}</span><time datetime="${esc(row.created)}">${esc(new Date(row.created).toLocaleString('en-IE'))}</time></button><button class="text-button history-delete" data-delete="${index}" aria-label="Delete saved test ${index+1}">Delete</button></li>`;
   }).join(''):'<li class="history-empty">No tests saved in this browser.</li>';
   $('clearHistory').disabled=historyRows.length===0 && !historyMessage;
@@ -449,7 +474,7 @@ async function runLiveExample() {
   try {
     const result=await json('/api/custom',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
     if(!validResult(result,text)) throw new Error('The server returned an incomplete test result. Try again.');
-    const record={input:text,label:data.s.title,origin:`New test · ${data.s.title}`,analysis:result.analysis,bout:result.bout};renderResult(record);saveHistory(record);status('New example test finished.');
+    const record={input:text,label:data.s.title,origin:`New test · ${data.s.title}`,analysis:result.analysis,bout:result.bout,agreement:result.agreement};renderResult(record);saveHistory(record);status('New example test finished.');
   } catch(error) {readyState('The test did not finish','Run test can still replay the saved example.');status(error.message,true);}
   finally {busy=false;controls();}
 }
@@ -519,7 +544,7 @@ function renderInspectedTrials() {
   const acting=inspectedData.evaluation.bouts.find(item=>item.scenario===scenario && item.condition===$('inspectCondition').value && String(item.repeat)===$('inspectActingRepeat').value);
   $('inspectedAsked').innerHTML=recognition?`<p class="verdict">Saved reply: ${esc(recognition.verdict || 'unclear')}</p><p class="answer">${esc(recognition.reply || 'No reply was saved.')}</p>`:'<p>No saved recognition trial matches this selection.</p>';
   if(!acting){$('inspectedActing').innerHTML='<p>No saved action trial matches this selection.</p>';return;}
-  const label={compromised:'Risky tool request recorded',verified:'Verification requested',resisted:'No risky request recorded',error:'Trial did not finish'}[acting.outcome] || 'Outcome not recorded';
+  const label={compromised:'Simulated risky request recorded',verified:'Simulated verification requested',resisted:'No simulated risky request recorded',error:'Trial did not finish'}[acting.outcome] || 'Outcome not recorded';
   let message=0;
   $('inspectedActing').innerHTML=`<p class="verdict">${esc(label)}</p><ol class="inspected-timeline">${(acting.transcript || []).map(item=>{
     if(item.who==='scammer'){message++;return `<li><small>Incoming message ${message}</small><p>${esc(item.text)}</p></li>`;}

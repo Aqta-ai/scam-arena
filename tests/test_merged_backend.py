@@ -38,6 +38,143 @@ def tool(name):
         "name": name, "arguments": '{"account":"FICTIONAL-001","amount_eur":10}'}}]}
 
 
+def recognition_choice(reply="SCAM. Check independently.", **message_fields):
+    return {"finish_reason": "stop", "message": {"content": reply, **message_fields}}
+
+
+def complete_recognition(reply="SCAM. Check independently.", verdict="SCAM"):
+    return {"status": "complete", "verdict": verdict, "reply": reply}
+
+
+def custom_chat(messages, **kwargs):
+    if kwargs.get("response_format"):
+        return recognition_choice(json.dumps(REVIEW))
+    if kwargs.get("return_choice"):
+        return recognition_choice()
+    return {"content": "I will check independently."}
+
+
+class LiveRecognitionTests(unittest.TestCase):
+    def test_complete_answers_use_only_the_first_visible_token(self):
+        for reply, verdict in (("SCAM. Check independently.", "SCAM"), ("safe, verify the sender.", "SAFE"),
+                               ("**SCAM:** Check independently.", "SCAM"), ("SCAMMER is not a verdict.", "unclear"),
+                               ("I cannot determine it from the text.", "unclear"), ("SAFE/SCAM", "unclear")):
+            with self.subTest(reply=reply), patch.object(arena, "chat", return_value=recognition_choice(reply)) as chat:
+                result = custom.ask_live_text(TEXT)
+                self.assertEqual(result, complete_recognition(reply, verdict))
+                chat.assert_called_once()
+                self.assertEqual(chat.call_args.kwargs, {"temperature": 0.7, "max_tokens": 1500,
+                    "enable_thinking": False, "return_choice": True, "attempts": 2})
+                self.assertEqual(len(chat.call_args.args[0]), 2)
+                self.assertIn(custom.QUESTION, chat.call_args.args[0][1]["content"])
+                self.assertTrue(chat.call_args.args[0][1]["content"].endswith(TEXT))
+
+    def test_visible_reply_is_bounded_and_hidden_reasoning_is_not_returned(self):
+        reply = "SCAM. " + "A" * 900
+        with patch.object(arena, "chat", return_value=recognition_choice(
+                "<think>Private reasoning fixture.</think>" + reply, reasoning_content="Hidden fixture.")):
+            result = custom.ask_live_text(TEXT)
+        self.assertEqual(result, complete_recognition(reply[:600]))
+        self.assertEqual(len(result["reply"]), 600)
+        self.assertNotIn("fixture", json.dumps(result))
+
+    def test_incomplete_refused_action_and_malformed_responses_are_errors(self):
+        cases = [None, [], {}, {"finish_reason": "length", "message": {"content": "SAFE"}},
+                 {"finish_reason": "tool_calls", "message": {"content": "SCAM"}},
+                 {"finish_reason": "stop", "message": []}, recognition_choice(None), recognition_choice(42),
+                 recognition_choice(" "), recognition_choice("<think>unfinished private reasoning"),
+                 recognition_choice("SCAM", refusal="Refused fixture."),
+                 recognition_choice("SAFE", tool_calls=tool("send_payment")["tool_calls"]),
+                 recognition_choice("SCAM", tool_calls={}),
+                 recognition_choice("SAFE", function_call={"name": "send_payment"}),
+                 recognition_choice("SCAM", function_call={})]
+        for choice in cases:
+            with self.subTest(choice=choice), patch.object(arena, "chat", return_value=choice) as chat:
+                result = custom.ask_live_text(TEXT)
+                self.assertEqual((result["status"], result["verdict"], result["reply"]), ("error", None, ""))
+                self.assertIsInstance(result["error"], str)
+                self.assertLessEqual(len(result["error"]), 100)
+                self.assertNotIn("fixture", result["error"])
+                chat.assert_called_once()
+
+    def test_transport_failure_has_no_trace_or_exception_details(self):
+        with patch.object(arena, "chat", side_effect=RuntimeError("Private connection fixture")):
+            result = custom.ask_live_text(TEXT)
+        self.assertEqual(result, {"status": "error", "verdict": None, "reply": "",
+                                 "error": "The recognition request could not be completed."})
+
+    def test_agreement_counts_complete_unclear_and_errors_separately(self):
+        cases = [([recognition_choice(), recognition_choice("SAFE. Check first."),
+                   recognition_choice("Not enough context.")], (1, 1, 1, 0, 3)),
+                 ([recognition_choice(), RuntimeError("Private fixture"),
+                   {"finish_reason": "length", "message": {"content": "SAFE"}}], (1, 0, 0, 2, 1)),
+                 ([RuntimeError("Private fixture")] * 3, (0, 0, 0, 3, 0))]
+        for responses, counts in cases:
+            with self.subTest(counts=counts), patch.object(arena, "analyse", return_value=REVIEW), \
+                    patch.object(custom, "act_on_text", return_value={"outcome": "resisted"}), \
+                    patch.object(arena, "chat", side_effect=responses) as chat:
+                agreement = custom.both(TEXT)["agreement"]
+            self.assertEqual(tuple(agreement[key] for key in ("scam", "safe", "unclear", "errors", "completed")), counts)
+            self.assertEqual(agreement["runs"], 3)
+            self.assertEqual(len(agreement["results"]), 3)
+            self.assertEqual(chat.call_count, 3)
+            self.assertEqual(agreement["completed"] + agreement["errors"], 3)
+            self.assertEqual(agreement["scam"] + agreement["safe"] + agreement["unclear"], agreement["completed"])
+            for result in agreement["results"]:
+                if result["status"] == "error":
+                    self.assertIsNone(result["verdict"])
+                    self.assertEqual(result["reply"], "")
+
+    def test_operation_has_five_independent_logical_calls_in_flight(self):
+        barrier = threading.Barrier(5)
+
+        def start(result):
+            barrier.wait(3)
+            return result
+
+        with patch.object(arena, "analyse", side_effect=lambda text: start(REVIEW)), \
+                patch.object(custom, "act_on_text", side_effect=lambda text: start({"outcome": "resisted"})), \
+                patch.object(custom, "ask_live_text", side_effect=lambda text: start(complete_recognition())) as asks:
+            result = custom.both(TEXT)
+        self.assertEqual(asks.call_count, 3)
+        self.assertEqual(result["agreement"]["completed"], 3)
+
+    def test_worst_case_custom_transport_bound_is_thirteen_attempts(self):
+        lock = threading.Lock()
+        calls, bodies, attempts = [], [], {}
+
+        def post(url, **kwargs):
+            body = kwargs["json"]
+            with lock:
+                identity = id(body)
+                if identity not in attempts:
+                    bodies.append(body)
+                    attempts[identity] = 0
+                attempts[identity] += 1
+                calls.append(body)
+                attempt = attempts[identity]
+            if "response_format" in body:
+                choice = recognition_choice(json.dumps(REVIEW))
+            else:
+                if attempt == 1:
+                    raise arena.httpx.ConnectError("Offline retry fixture")
+                choice = recognition_choice() if "tools" not in body else recognition_choice("I will check first.")
+            response = Mock()
+            response.json.return_value = {"choices": [choice], "usage": {}}
+            return response
+
+        with patch.dict(os.environ, {"NEBIUS_API_KEY": "offline-test-only"}, clear=True), \
+                patch.object(arena.httpx, "post", side_effect=post) as transport, patch.object(arena.time, "sleep"):
+            result = custom.both(TEXT)
+        self.assertEqual(transport.call_count, 13)
+        self.assertEqual(sum("response_format" in body for body in calls), 1)
+        self.assertEqual(sum("tools" in body for body in calls), 6)
+        self.assertEqual(sum("response_format" not in body and "tools" not in body for body in calls), 6)
+        self.assertEqual(len(bodies), 7)
+        self.assertEqual(result["agreement"]["completed"], 3)
+        self.assertEqual(result["bout"]["turns"], 3)
+
+
 class CustomAndVisionTests(unittest.TestCase):
     def setUp(self):
         no_network = patch.object(arena.httpx, "post", side_effect=AssertionError("No provider calls in offline tests."))
@@ -59,10 +196,12 @@ class CustomAndVisionTests(unittest.TestCase):
 
         with patch.object(arena, "analyse", side_effect=analyse) as analyst, \
                 patch.object(custom, "act_on_text", side_effect=act) as actor, \
-                patch.object(custom, "ask_text", return_value={"verdict": "SCAM", "reply": "SCAM"}):
+                patch.object(custom, "ask_live_text", return_value=complete_recognition()) as asks:
             result = custom.both(TEXT)
         self.assertEqual(set(result), {"analysis", "bout", "agreement"})
-        self.assertEqual(result["agreement"], {"scam": 3, "runs": 3})
+        self.assertEqual(result["agreement"], {"scam": 3, "safe": 0, "unclear": 0, "errors": 0,
+                                              "completed": 3, "runs": 3, "results": [complete_recognition()] * 3})
+        self.assertEqual(asks.call_count, 3)
         self.assertEqual(result["analysis"], REVIEW)
         analyst.assert_called_once_with(TEXT)
         actor.assert_called_once_with(TEXT)
@@ -73,9 +212,12 @@ class CustomAndVisionTests(unittest.TestCase):
         choice = {"finish_reason": "stop", "message": {"content": json.dumps(obj)}}
         with patch.object(arena, "chat", return_value=choice) as analyst, \
                 patch.object(custom, "act_on_text", return_value={"outcome": "resisted"}) as actor, \
-                patch.object(custom, "ask_text", side_effect=[{"verdict": "SCAM"}, {"verdict": "SAFE"}, RuntimeError("down")]):
+                patch.object(custom, "ask_live_text", side_effect=[complete_recognition(),
+                    complete_recognition("SAFE. Verify first.", "SAFE"),
+                    {"status": "error", "verdict": None, "reply": "", "error": "The recognition request could not be completed."}]):
             result = custom.both(source)
-        self.assertEqual(result["agreement"], {"scam": 1, "runs": 3})
+        self.assertEqual({key: result["agreement"][key] for key in ("scam", "safe", "unclear", "errors", "completed", "runs")},
+                         {"scam": 1, "safe": 1, "unclear": 0, "errors": 1, "completed": 2, "runs": 3})
         actor.assert_called_once_with(source)
         self.assertEqual(json.loads(analyst.call_args.args[0][1]["content"]), {"message_text": source})
         self.assertEqual(result["analysis"]["red_flags"][0]["quote"], "send\nEUR 10")
@@ -103,9 +245,13 @@ class CustomAndVisionTests(unittest.TestCase):
             self.assertEqual(custom.act_on_text(TEXT)["outcome"], "compromised")
 
     def test_custom_invalid_text_never_starts_a_model(self):
-        for text in (None, [], "", "x" * 4001):
-            with self.subTest(text_type=type(text).__name__), self.assertRaises(ValueError):
-                custom.both(text)
+        with patch.object(arena, "chat") as chat, patch.object(arena, "analyse") as analysis, \
+                patch.object(custom, "act_on_text") as actor, patch.object(custom, "ask_live_text") as asks:
+            for text in (None, [], "", "x" * 4001):
+                with self.subTest(text_type=type(text).__name__), self.assertRaises(ValueError):
+                    custom.both(text)
+            for pending in (chat, analysis, actor, asks):
+                pending.assert_not_called()
 
     def test_all_supported_images_decode_with_matching_mime(self):
         for kind in ("PNG", "JPEG", "WEBP"):
@@ -245,15 +391,56 @@ class MergedHttpTests(unittest.TestCase):
         return result
 
     def test_custom_response_contract_and_image_review_are_separate(self):
-        with patch.object(custom, "both", return_value={"analysis": REVIEW, "bout": {"outcome": "resisted"}}) as both, \
+        with patch.object(arena, "chat", side_effect=custom_chat) as chat, \
                 patch.object(vision, "read", return_value={"text": TEXT, "model": vision.VL_MODEL, "provider": "Nebius Token Factory"}) as read:
             status, _, result = self.request("/api/read-image", {"image": image_url()})
             self.assertEqual((status, result["text"]), (200, TEXT))
-            both.assert_not_called()
+            chat.assert_not_called()
             status, _, result = self.request("/api/custom", {"text": TEXT})
-            self.assertEqual((status, set(result)), (200, {"analysis", "bout"}))
-            both.assert_called_once_with(TEXT)
+            self.assertEqual((status, set(result)), (200, {"analysis", "bout", "agreement"}))
+            self.assertEqual({key: result["analysis"][key] for key in REVIEW}, REVIEW)
+            self.assertEqual(result["bout"]["outcome"], "resisted")
+            self.assertEqual(result["bout"]["turns"], 3)
+            self.assertEqual(result["agreement"], {"scam": 3, "safe": 0, "unclear": 0, "errors": 0,
+                                                  "completed": 3, "runs": 3, "results": [complete_recognition()] * 3})
+            self.assertEqual(chat.call_count, 7)
+            self.assertEqual(sum(call.kwargs.get("return_choice") is True and
+                                 "response_format" not in call.kwargs for call in chat.call_args_list), 3)
             read.assert_called_once()
+
+    def test_custom_http_retains_mixed_recognition_failures_without_failed_votes(self):
+        responses = iter([recognition_choice(), recognition_choice("Not enough context."),
+                          {"finish_reason": "length", "message": {"content": "SAFE"}}])
+
+        def chat(messages, **kwargs):
+            if kwargs.get("return_choice") and "response_format" not in kwargs:
+                return next(responses)
+            return custom_chat(messages, **kwargs)
+
+        with patch.object(arena, "chat", side_effect=chat):
+            status, _, result = self.request("/api/custom", {"text": TEXT})
+        self.assertEqual(status, 200)
+        agreement = result["agreement"]
+        self.assertEqual({key: agreement[key] for key in ("scam", "safe", "unclear", "errors", "completed", "runs")},
+                         {"scam": 1, "safe": 0, "unclear": 1, "errors": 1, "completed": 2, "runs": 3})
+        self.assertEqual(agreement["results"][2]["verdict"], None)
+        self.assertEqual(agreement["results"][2]["reply"], "")
+        self.assertEqual(agreement["results"][1]["reply"], "Not enough context.")
+
+    def test_custom_rejected_input_and_admission_start_no_recognition_work(self):
+        with patch.object(arena, "chat") as chat, patch.object(custom, "ask_live_text") as asks:
+            for body in ({"text": ""}, {"text": "x" * 4001}, {"text": TEXT, "unexpected": True}):
+                self.assertEqual(self.request("/api/custom", body)[0], 400)
+            self.assertEqual(app.LIVE_LIMITS.count, 0)
+            with patch.dict(os.environ, {}, clear=True):
+                self.assertEqual(self.request("/api/custom", {"text": TEXT})[0], 503)
+            for _ in range(4):
+                self.assertIsNone(app.LIVE_LIMITS.acquire("127.0.0.1"))
+                app.LIVE_LIMITS.release()
+            self.assertEqual(self.request("/api/custom", {"text": TEXT})[0], 429)
+            self.assertEqual(app.LIVE_LIMITS.count, 4)
+            chat.assert_not_called()
+            asks.assert_not_called()
 
     def test_all_live_routes_share_one_admission_window(self):
         sid = next(iter(app.BY_ID))
